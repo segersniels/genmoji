@@ -56,14 +56,15 @@
     shadow-md
     rounded-2xl
     border
-    border-gray-100;
+    border-gray-100
+    hover:bg-gray-50
+    cursor-copy;
 }
 
 .message p {
   @apply font-mono
     font-semibold
     text-center
-    cursor-pointer
     bg-gradient-to-tr
     from-gradient-from
     to-gradient-to

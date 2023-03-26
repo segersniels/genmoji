@@ -83,14 +83,13 @@ export default function Home() {
           <>
             <hr className="my-4 w-64 mx-auto" />
 
-            <div className={styles.message}>
-              <p
-                onClick={() => {
-                  return navigator.clipboard.writeText(message);
-                }}
-              >
-                {message}
-              </p>
+            <div
+              className={styles.message}
+              onClick={() => {
+                return navigator.clipboard.writeText(message);
+              }}
+            >
+              <p>{message}</p>
             </div>
           </>
         )}
