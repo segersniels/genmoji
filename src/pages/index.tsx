@@ -58,7 +58,7 @@ export default function Home() {
         <form onSubmit={handleSubmit}>
           <TextArea
             value={code}
-            placeholder="Please enter code or paste a git diff here"
+            placeholder="Please paste a diff or code snippet here"
             onChange={(event) => setCode(event.target.value)}
             rows={10}
           />
