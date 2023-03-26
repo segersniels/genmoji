@@ -1,15 +1,25 @@
-.message {
-  @apply font-mono
-    text-center
-    cursor-pointer
-    bg-gradient-to-tr
-    from-gradient-from
-    to-gradient-to
-    bg-clip-text
-    p-2
-    opacity-90;
+.container {
+  @apply flex
+    max-w-5xl
+    mx-auto
+    flex-col
+    items-center
+    justify-center
+    p-4
+    min-h-screen
+    text-gray-900;
+}
 
-  -webkit-text-fill-color: transparent;
+.wrapper {
+  @apply max-w-xl
+    w-full;
+}
+
+.title {
+  @apply text-6xl
+    font-bold
+    text-center
+    mb-8;
 }
 
 .textarea {
@@ -25,4 +35,39 @@
     focus:ring-black
     p-2
     my-2;
+}
+
+.button {
+  @apply w-full
+    bg-black
+    rounded-xl
+    text-white
+    font-medium
+    px-4
+    py-2
+    hover:bg-black/80;
+}
+
+.message {
+  @apply flex
+    flex-col
+    py-4
+    shadow-md
+    rounded-2xl
+    border
+    border-gray-100;
+}
+
+.message p {
+  @apply font-mono
+      text-center
+      cursor-pointer
+      bg-gradient-to-tr
+      from-gradient-from
+      to-gradient-to
+      bg-clip-text
+      p-2
+      opacity-90;
+
+    -webkit-text-fill-color: transparent;
 }

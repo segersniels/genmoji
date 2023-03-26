@@ -45,13 +45,13 @@ export default function Home() {
   );
 
   return (
-    <div className="flex max-w-5xl mx-auto flex-col items-center justify-center p-4 min-h-screen text-gray-900">
+    <div className={styles.container}>
       <Head>
         <title>Gitmoji Commit Generator</title>
       </Head>
 
-      <div className="max-w-xl w-full">
-        <h1 className="text-6xl font-bold text-center mb-8">
+      <div className={styles.wrapper}>
+        <h1 className={styles.title}>
           Generate your gitmoji commit message 👋
         </h1>
 
@@ -73,7 +73,7 @@ export default function Home() {
           <button
             type="submit"
             disabled={!code.trim().length}
-            className="w-full bg-black rounded-xl text-white font-medium px-4 py-2 hover:bg-black/80"
+            className={styles.button}
           >
             Generate
           </button>
@@ -83,17 +83,8 @@ export default function Home() {
           <>
             <hr className="my-4 w-64 mx-auto" />
 
-            <div
-              className="flex
-              flex-col
-              py-4
-              shadow-md
-              rounded-2xl
-              border
-              border-gray-100"
-            >
+            <div className={styles.message}>
               <p
-                className={styles.message}
                 onClick={() => {
                   return navigator.clipboard.writeText(message);
                 }}
