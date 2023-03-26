@@ -61,13 +61,13 @@
 
 .message p {
   @apply font-mono
-      text-center
-      cursor-pointer
-      bg-gradient-to-tr
-      from-gradient-from
-      to-gradient-to
-      bg-clip-text
-      opacity-90;
+    text-center
+    cursor-pointer
+    bg-gradient-to-tr
+    from-gradient-from
+    to-gradient-to
+    bg-clip-text
+    opacity-90;
 
-    -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: transparent;
 }
