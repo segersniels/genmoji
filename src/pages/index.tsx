@@ -8,6 +8,7 @@ import {
 } from 'react';
 import styles from 'styles/Home.module.css';
 import Footer from 'components/Footer';
+import Link from 'next/link';
 
 const TextArea = (
   props: DetailedHTMLProps<
@@ -53,7 +54,11 @@ export default function Home() {
 
       <div className={styles.wrapper}>
         <h1 className={styles.title}>
-          Generate your gitmoji commit message 👋
+          Generate your{' '}
+          <Link href="https://gitmoji.dev" className={styles.gitmoji} target="_blank">
+            gitmoji
+          </Link>{' '}
+          commit message 👋
         </h1>
 
         <form onSubmit={handleSubmit}>
