@@ -14,12 +14,7 @@ const TextArea = (
     HTMLTextAreaElement
   >
 ) => {
-  return (
-    <textarea
-      className="w-full font-mono text-sm rounded-md text-gray-800 border border-gray-300 shadow-sm focus:border-black focus:ring-black p-2 my-2"
-      {...props}
-    />
-  );
+  return <textarea className={styles.textarea} {...props} />;
 };
 
 export default function Home() {
