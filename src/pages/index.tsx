@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import styles from 'styles/Home.module.css';
+import Footer from 'components/Footer';
 
 const TextArea = (
   props: DetailedHTMLProps<
@@ -94,6 +95,8 @@ export default function Home() {
           </>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }
