@@ -31,6 +31,10 @@ export default function Home() {
 
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center p-4 min-h-screen text-gray-900">
+      <Head>
+        <title>Gitmoji Commit Generator</title>
+      </Head>
+
       <div className="max-w-xl w-full">
         <h1 className="text-6xl font-bold text-center mb-8">
           Generate your gitmoji commit message
