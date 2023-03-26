@@ -37,7 +37,7 @@ export default function Home() {
 
       <div className="max-w-xl w-full">
         <h1 className="text-6xl font-bold text-center mb-8">
-          Generate your gitmoji commit message
+          Generate your gitmoji commit message 👋
         </h1>
 
         <form onSubmit={handleSubmit}>
