@@ -45,7 +45,8 @@
     font-medium
     px-4
     py-2
-    hover:bg-black/80;
+    hover:bg-black/80
+    disabled:bg-black/50;
 }
 
 .message {

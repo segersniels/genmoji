@@ -72,8 +72,8 @@ export default function Home() {
 
           <button
             type="submit"
-            disabled={!code.trim().length}
             className={styles.button}
+            disabled={!code.trim().length}
           >
             Generate
           </button>
