@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { FormEvent, useCallback, useState } from 'react';
 import styles from 'styles/Home.module.css';
 
