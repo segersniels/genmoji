@@ -31,7 +31,8 @@
     border
     border-gray-300
     shadow-sm
-    focus:border-black
+    focus:outline-none
+    focus:border-gray-800
     focus:ring-black
     p-2
     my-2;
