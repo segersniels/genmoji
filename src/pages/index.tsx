@@ -72,6 +72,7 @@ export default function Home() {
 
           <button
             type="submit"
+            disabled={!code.trim().length}
             className="w-full bg-black rounded-xl text-white font-medium px-4 py-2 hover:bg-black/80"
           >
             Generate
