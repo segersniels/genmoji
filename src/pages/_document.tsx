@@ -26,8 +26,8 @@ export default function Document() {
           content="Generate your gitmoji commit message"
         />
 
-        <meta property="og:image" content="https://genmoji.xyz/og-image.jpg" />
-        <meta name="twitter:image" content="https://genmoji.xyz/og-image.jpg" />
+        <meta property="og:image" content="https://genmoji.xyz/og-image.png" />
+        <meta name="twitter:image" content="https://genmoji.xyz/og-image.png" />
       </Head>
       <body>
         <Main />
