@@ -35,6 +35,7 @@ export default async function handler(
     Are they fixing a bug, adding a new feature, improving performance or readability, or something else?
     Use this information to craft a concise and meaningful gitmoji commit message that clearly indicates what the provided snippet does.
     Remember, clarity and conciseness are key. Use simple language and avoid technical jargon.
+    Your commit message should not exceed the 80 character limit unless it's impossible to provide enough context within the limit.
     A good commit message should provide enough information to understand the changes without being too verbose.
 
     To help you understand what works and what doesn't, here are some examples of good and bad commit messages:
