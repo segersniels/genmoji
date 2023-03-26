@@ -1,6 +1,26 @@
 import Head from 'next/head';
-import { FormEvent, useCallback, useState } from 'react';
+import {
+  DetailedHTMLProps,
+  FormEvent,
+  TextareaHTMLAttributes,
+  useCallback,
+  useState,
+} from 'react';
 import styles from 'styles/Home.module.css';
+
+const TextArea = (
+  props: DetailedHTMLProps<
+    TextareaHTMLAttributes<HTMLTextAreaElement>,
+    HTMLTextAreaElement
+  >
+) => {
+  return (
+    <textarea
+      className="w-full font-mono text-sm rounded-md text-gray-800 border border-gray-300 shadow-sm focus:border-black focus:ring-black p-2 my-2"
+      {...props}
+    />
+  );
+};
 
 export default function Home() {
   const [code, setCode] = useState('');
@@ -41,20 +61,18 @@ export default function Home() {
         </h1>
 
         <form onSubmit={handleSubmit}>
-          <textarea
-            className="w-full  font-mono text-sm rounded-md text-gray-800 border border-gray-300 shadow-sm focus:border-black focus:ring-black p-2 my-2"
+          <TextArea
             value={code}
             placeholder="Please enter code or paste a git diff here"
             onChange={(event) => setCode(event.target.value)}
             rows={10}
           />
 
-          <textarea
-            className="w-full rounded-md text-gray-800 border border-gray-300 shadow-sm focus:border-black focus:ring-black p-2 my-2"
-            rows={2}
-            placeholder="Additionally you can provide some extra context here"
+          <TextArea
             value={context}
+            placeholder="Additionally you can provide some extra context here"
             onChange={(event) => setContext(event.target.value)}
+            rows={2}
           />
 
           <button
