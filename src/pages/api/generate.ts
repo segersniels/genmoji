@@ -56,9 +56,11 @@ export default async function handler(
     Optional additional context below:
 
     ${req.body.context}
+
+    Limit yourself to one sentence but don't end it in a punctuation mark.
 `;
 
   const message = await generate(prompt);
 
-  return res.status(200).json({ message });
+  return res.status(200).json({ message: message?.replace(/\.$/g, '') });
 }
