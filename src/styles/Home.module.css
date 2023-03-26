@@ -52,7 +52,7 @@
 .message {
   @apply flex
     flex-col
-    py-4
+    p-4
     shadow-md
     rounded-2xl
     border
@@ -67,7 +67,6 @@
       from-gradient-from
       to-gradient-to
       bg-clip-text
-      p-2
       opacity-90;
 
     -webkit-text-fill-color: transparent;
