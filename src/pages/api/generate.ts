@@ -7,23 +7,27 @@ export default async function handler(
 ) {
   const prompt = `
     Refer to the provided git diff or code snippet and provide a suitable gitmoji commit message.
+    When reviewing the diff or code, focus on identifying the main purpose of the changes.
+    Are they fixing a bug, adding a new feature, improving performance or readability, or something else?
+    Use this information to craft a concise and meaningful gitmoji commit message that clearly indicates what the provided snippet does.
+    Remember, clarity and conciseness are key. Use simple language and avoid technical jargon.
+    A good commit message should provide enough information to understand the changes without being too verbose.
 
-    Actively review the code or diff that will be provided and think about what the code does and what the commit message should be.
-    Everyone reading the commit message should be able to understand what the commit does without having to look at the code.
-    Refer to the code example or git diff below and provide a concise and meaningful gitmoji commit message that clearly indicates what the provided code does.
+    To help you understand what works and what doesn't, here are some examples of good and bad commit messages:
+    Good: :sparkles: Add new feature for user authentication
+    Bad: :rocket: Update code
 
-    ${req.body.prompt}
+    When reviewing a diff, pay attention to the changed filenames and use this information to extract the context of the changes.
+    This will help you create a more relevant and informative commit message.
+    If the user provides additional context, use it to further refine your message. But remember, the message should still be clear and concise.
+    Finally, always start your gitmoji commit message with a gitmoji followed by the commit message starting with a capital letter.
 
-    The user might also provide some additional context to help you constructing the message but you can ignore it if no context is provided.
+    ${req.body.code}
+
+    Optional additional context below:
 
     ${req.body.context}
-
-    A gitmoji commit message always starts with a gitmoji from the list above followed by the commit message starting with a capital letter.
-    Prevent having commit messages that don't give any context about the changes made.
-    So absolutely no commit messages like ":rocket: Deploy new changes" or ":bug: Fix bug" or ":recycle: Refactor code to improve performance" since these don't give any value to the commit.
-
-    """
-  `;
+`;
 
   const message = await generate(prompt);
 
