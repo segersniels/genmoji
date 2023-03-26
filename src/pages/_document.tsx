@@ -13,9 +13,9 @@ export default function Document() {
           property="og:description"
           content="Generate your gitmoji commit message"
         />
-        <meta property="og:title" content="Gitmoji Commit Generator" />
+        <meta property="og:title" content="Genmoji" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Gitmoji Commit Generator" />
+        <meta name="twitter:title" content="Genmoji" />
         <meta
           name="twitter:description"
           content="Generate your gitmoji commit message"

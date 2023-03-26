@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Gitmoji Commit Generator</title>
+        <title>Genmoji</title>
       </Head>
 
       <div className={styles.wrapper}>
