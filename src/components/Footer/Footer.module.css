@@ -1,12 +1,16 @@
 .container {
-  @apply fixed
-    bottom-0
-    w-full;
+  @apply flex
+    flex-col
+    fixed
+    right-0
+    h-full
+    justify-end;
 }
 
 .icon {
   @apply text-2xl
     hover:text-gray-700
-    m-2
+    mr-2
+    mb-2
     float-right;
 }
