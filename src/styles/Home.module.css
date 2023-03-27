@@ -6,8 +6,7 @@
     items-center
     justify-center
     p-4
-    min-h-screen
-    text-gray-900;
+    min-h-screen;
 }
 
 .wrapper {
@@ -27,7 +26,6 @@
     font-mono
     text-sm
     rounded-md
-    text-gray-800
     border
     border-gray-300
     shadow-sm

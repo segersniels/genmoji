@@ -6,7 +6,6 @@
 
 .icon {
   @apply text-2xl
-    text-gray-900
     hover:text-gray-700
     m-2
     float-right;
