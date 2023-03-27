@@ -92,7 +92,11 @@ export default function Home() {
       <div className={styles.wrapper}>
         <h1 className={styles.title}>
           Generate your{' '}
-          <Link href="https://gitmoji.dev" className={styles.gitmoji} target="_blank">
+          <Link
+            href="https://gitmoji.dev"
+            className={styles.gitmoji}
+            target="_blank"
+          >
             gitmoji
           </Link>{' '}
           commit message 👋
