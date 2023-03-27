@@ -2,30 +2,52 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { generate } from 'lib/api';
 import BackupList from 'resources/gitmojis.json';
 
-function parseList(list: {
-  gitmojis: { code: string; description: string }[];
-}) {
-  return list.gitmojis
+interface Gitmoji {
+  code: string;
+  emoji: string;
+  description: string;
+}
+
+function parseList(gitmojis: Gitmoji[]) {
+  return gitmojis
     .map((gitmoji) => `${gitmoji.code} - ${gitmoji.description}`)
     .join('\n');
+}
+
+/**
+ * Do some additional post processing on the received answer
+ */
+function parseMessage(message: string | undefined, gitmojis: Gitmoji[]) {
+  if (!message) {
+    return;
+  }
+
+  // Replace emojis with codes
+  for (const gitmoji of gitmojis) {
+    message = message.replace(gitmoji.emoji, gitmoji.code);
+  }
+
+  // Remove trailing punctuation
+  return message.replace(/\.$/g, '');
 }
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  let list;
+  let list = parseList(BackupList.gitmojis),
+    gitmojis: Gitmoji[] = BackupList.gitmojis;
+
   const response = await fetch(
     'https://raw.githubusercontent.com/carloscuesta/gitmoji/master/packages/gitmojis/src/gitmojis.json'
   );
 
-  if (!response.ok) {
-    list = parseList(BackupList);
-  } else {
+  if (response.ok) {
     try {
-      list = parseList(await response.json());
+      gitmojis = ((await response.json()) as { gitmojis: Gitmoji[] }).gitmojis;
+      list = parseList(gitmojis);
     } catch (err) {
-      list = parseList(BackupList);
+      // noop
     }
   }
 
@@ -63,9 +85,11 @@ export default async function handler(
     ${req.body.context}
 
     Limit yourself to one sentence but don't end it in a punctuation mark.
-`;
+  `;
 
   const message = await generate(prompt);
 
-  return res.status(200).json({ message: message?.replace(/\.$/g, '') });
+  return res.status(200).json({
+    message: parseMessage(message, gitmojis),
+  });
 }
