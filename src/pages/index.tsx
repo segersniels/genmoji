@@ -9,6 +9,7 @@ import {
 import styles from 'styles/Home.module.css';
 import Footer from 'components/Footer';
 import Link from 'next/link';
+import { AiOutlineLoading } from 'react-icons/ai';
 
 const TextArea = (
   props: DetailedHTMLProps<
@@ -19,29 +20,65 @@ const TextArea = (
   return <textarea className={styles.textarea} {...props} />;
 };
 
+const GenerateButton = ({
+  code,
+  isGenerating,
+}: {
+  code: string;
+  isGenerating: boolean;
+}) => {
+  if (isGenerating) {
+    return (
+      <button
+        type="submit"
+        className={styles.button}
+        disabled={!code.trim().length}
+      >
+        <AiOutlineLoading className="animate-spin font-bold mx-2 stroke-[3rem]" />
+      </button>
+    );
+  }
+
+  return (
+    <button
+      type="submit"
+      className={styles.button}
+      disabled={!code.trim().length}
+    >
+      Generate
+    </button>
+  );
+};
+
 export default function Home() {
   const [code, setCode] = useState('');
   const [context, setContext] = useState('');
   const [message, setMessage] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
+      try {
+        event.preventDefault();
+        setIsGenerating(true);
 
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        body: JSON.stringify({ code, context }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+        const response = await fetch('/api/generate', {
+          method: 'POST',
+          body: JSON.stringify({ code, context }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-      if (!response.ok) {
-        return;
+        if (!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+        setMessage(data.message);
+      } finally {
+        setIsGenerating(false);
       }
-
-      const data = await response.json();
-      setMessage(data.message);
     },
     [code, context]
   );
@@ -76,13 +113,7 @@ export default function Home() {
             rows={2}
           />
 
-          <button
-            type="submit"
-            className={styles.button}
-            disabled={!code.trim().length}
-          >
-            Generate
-          </button>
+          <GenerateButton code={code} isGenerating={isGenerating} />
         </form>
 
         {message && (

@@ -37,7 +37,11 @@
 }
 
 .button {
-  @apply w-full
+  @apply flex
+    w-full
+    h-10
+    justify-center
+    items-center
     bg-black
     rounded-xl
     text-white
