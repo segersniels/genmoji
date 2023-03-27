@@ -8,10 +8,38 @@ interface Gitmoji {
   description: string;
 }
 
-function parseList(gitmojis: Gitmoji[]) {
+function generateChoices(gitmojis: Gitmoji[]) {
   return gitmojis
     .map((gitmoji) => `${gitmoji.code} - ${gitmoji.description}`)
     .join('\n');
+}
+
+async function fetchGitmojis() {
+  try {
+    const response = await fetch(
+      'https://raw.githubusercontent.com/carloscuesta/gitmoji/master/packages/gitmojis/src/gitmojis.json'
+    );
+
+    if (response.ok) {
+      try {
+        const data: { gitmojis: Gitmoji[] } = await response.json();
+
+        return {
+          list: data.gitmojis,
+          choices: generateChoices(data.gitmojis),
+        };
+      } catch (err) {
+        // noop
+      }
+    }
+  } catch (err) {
+    // noop
+  }
+
+  return {
+    list: BackupList.gitmojis,
+    choices: generateChoices(BackupList.gitmojis),
+  };
 }
 
 /**
@@ -35,22 +63,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  let list = parseList(BackupList.gitmojis),
-    gitmojis: Gitmoji[] = BackupList.gitmojis;
-
-  const response = await fetch(
-    'https://raw.githubusercontent.com/carloscuesta/gitmoji/master/packages/gitmojis/src/gitmojis.json'
-  );
-
-  if (response.ok) {
-    try {
-      gitmojis = ((await response.json()) as { gitmojis: Gitmoji[] }).gitmojis;
-      list = parseList(gitmojis);
-    } catch (err) {
-      // noop
-    }
-  }
-
+  const data = await fetchGitmojis();
   const prompt = `
     Refer to the provided git diff or code snippet and provide a suitable gitmoji commit message.
     When reviewing the diff or code, focus on identifying the main purpose of the changes.
@@ -66,7 +79,7 @@ export default async function handler(
 
     Additionally, here is a list of gitmoji codes and their descriptions:
 
-    ${list}
+    ${data.choices}
 
     When reviewing a diff, pay attention to the changed filenames and use this information to extract the context of the changes.
     This will help you create a more relevant and informative commit message.
@@ -90,6 +103,6 @@ export default async function handler(
   const message = await generate(prompt);
 
   return res.status(200).json({
-    message: parseMessage(message, gitmojis),
+    message: parseMessage(message, data.list),
   });
 }
