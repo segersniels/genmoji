@@ -21,16 +21,12 @@ async function fetchGitmojis() {
     );
 
     if (response.ok) {
-      try {
-        const data: { gitmojis: Gitmoji[] } = await response.json();
+      const data: { gitmojis: Gitmoji[] } = await response.json();
 
-        return {
-          list: data.gitmojis,
-          choices: generateChoices(data.gitmojis),
-        };
-      } catch (err) {
-        // noop
-      }
+      return {
+        list: data.gitmojis,
+        choices: generateChoices(data.gitmojis),
+      };
     }
   } catch (err) {
     // noop
