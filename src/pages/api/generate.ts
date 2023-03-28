@@ -96,7 +96,16 @@ export default async function handler(
     Always start your commit message with a gitmoji followed by the message starting with a capital letter.
     Never mention file names or function names in the message.
 
-    ${req.body.context}
+    ${
+      req.body.context
+        ? `
+          Refer to the provided additional context to assist you with choosing a correct gitmoji
+          and constructing a good message: """
+          ${req.body.context}
+          """
+        `
+        : ''
+    }
 
     Here is the provided git diff or code snippet: """
     ${req.body.code}
