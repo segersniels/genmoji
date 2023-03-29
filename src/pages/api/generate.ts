@@ -69,7 +69,6 @@ export default async function handler(
     When reviewing the diff or code, focus on identifying the main purpose of the changes.
     Are they fixing a bug, adding a new feature, improving performance or readability, or something else?
     Use this information to craft a concise and meaningful gitmoji commit message that clearly indicates what the provided snippet does.
-    A good commit message should provide enough information to understand the changes without being too verbose.
 
     When reviewing a diff, pay attention to the changed filenames and extract the context of the changes.
     This will help you create a more relevant and informative commit message.
