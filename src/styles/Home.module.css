@@ -18,7 +18,8 @@
   @apply text-7xl
     font-bold
     text-center
-    mb-8;
+    mb-8
+    tracking-tighter;
 }
 
 .textarea {
