@@ -84,6 +84,9 @@ function parseMessage(message: string | undefined, gitmojis: Gitmoji[]) {
     message = message.replace(gitmoji.emoji, gitmoji.code);
   }
 
+  // Force only one sentence if for some reason multiple are returned
+  message = message.split('\n')[0];
+
   // Remove trailing punctuation
   return message.replace(/\.$/g, '');
 }
