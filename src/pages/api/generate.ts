@@ -209,9 +209,13 @@ export default async function handler(
 
     // Check if minified prompt is still too long
     if (encoding.encode(prompt).length > 4096) {
-      throw new Error(
-        'The diff is too large, try reducing the number of staged changes.'
-      );
+      return res
+        .status(400)
+        .send(
+          `The diff is too large (${
+            encoding.encode(prompt).length
+          }), try reducing the number of staged changes.`
+        );
     }
   }
 
