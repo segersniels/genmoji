@@ -76,6 +76,8 @@ export default function Home() {
 
         const data = await response.json();
         setMessage(data.message);
+      } catch (err) {
+        // noop
       } finally {
         setIsGenerating(false);
       }

@@ -1,12 +1,24 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { generate } from 'lib/api';
 import BackupList from 'resources/gitmojis.json';
+// @ts-expect-error
+import wasm from 'resources/tiktoken_bg.wasm?module';
+import model from '@dqbd/tiktoken/encoders/cl100k_base.json';
+import { init, Tiktoken } from '@dqbd/tiktoken/lite/init';
 
 interface Gitmoji {
   code: string;
   emoji: string;
   description: string;
 }
+
+if (!process.env.OPENAI_API_KEY) {
+  throw new Error('Missing OPENAI_API_KEY environment variable');
+}
+
+export const config = {
+  runtime: 'edge',
+};
 
 function generateChoices(gitmojis: Gitmoji[]) {
   return gitmojis
@@ -46,17 +58,31 @@ const FILES_TO_IGNORE = [
   'yarn-error.log',
   '.pnpm-debug.log',
 ];
+/**
+ * Removes lines from the diff that don't start with a special character
+ */
+function removeExcessiveLinesFromChunk(diff: string) {
+  return diff
+    .split('\n')
+    .filter((line) => /^\W/.test(line))
+    .join('\n');
+}
 
 /**
- * Attempt to remove lockfile changes from the diff
+ * Prepare a diff for use in the prompt by removing stuff like
+ * the lockfile changes and removing some of the whitespace.
  */
-export function removeLockfileChanges(diff: string) {
-  const result = Array.from(
+function prepareDiff(diff: string, minify = false) {
+  if (!minify) {
+    return diff;
+  }
+
+  const chunks = Array.from(
     diff.matchAll(/diff --git[\s\S]*?(?=diff --git|$)/g),
     (match) => match[0]
-  );
+  ).map((chunk) => chunk.replace(/ {2,}/g, ''));
 
-  return result
+  return chunks
     .filter((chunk) => {
       const firstLine = chunk.split('\n')[0];
 
@@ -68,6 +94,7 @@ export function removeLockfileChanges(diff: string) {
 
       return true;
     })
+    .map(removeExcessiveLinesFromChunk)
     .join('\n');
 }
 
@@ -91,12 +118,13 @@ function parseMessage(message: string | undefined, gitmojis: Gitmoji[]) {
   return message.replace(/\.$/g, '');
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>
+function generatePrompt(
+  diff: string,
+  gitmojis: string,
+  context?: string,
+  minify = false
 ) {
-  const data = await fetchGitmojis();
-  const prompt = `
+  return `
     Refer to the provided git diff or code snippet and provide a suitable commit message.
 
     When reviewing the diff or code, focus on identifying the main purpose of the changes.
@@ -113,7 +141,7 @@ export default async function handler(
       - Config file adjustments are usually related to configuration changes.
 
     Here is a list of gitmoji codes and their descriptions of what they mean when they are used: """
-    ${data.choices}
+    ${gitmojis}
     """
 
     Try to match the generated message to a fitting emoji using its description from the provided list above.
@@ -135,20 +163,57 @@ export default async function handler(
       - :memo: Update documentation for API endpoints
 
     ${
-      req.body.context
+      context
         ? `
           Refer to the provided additional context to assist you with choosing a correct gitmoji
           and constructing a good message: """
-          ${req.body.context}
+          ${context}
           """
         `
         : ''
     }
 
     Here is the provided git diff or code snippet: """
-    ${removeLockfileChanges(req.body.code)}
+    ${prepareDiff(diff, minify)}
     """
   `;
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<any>
+) {
+  await init((imports) => WebAssembly.instantiate(wasm, imports));
+  const encoding = new Tiktoken(
+    model.bpe_ranks,
+    model.special_tokens,
+    model.pat_str
+  );
+
+  const data = await fetchGitmojis();
+  let prompt = generatePrompt(
+    req.body.diff,
+    data.choices,
+    req.body.context,
+    false
+  );
+
+  // Check if exceeding model max token length and minify accordingly
+  if (encoding.encode(prompt).length > 4096) {
+    prompt = generatePrompt(
+      req.body.diff,
+      data.choices,
+      req.body.context,
+      true
+    );
+
+    // Check if minified prompt is still too long
+    if (encoding.encode(prompt).length > 4096) {
+      throw new Error(
+        'The diff is too large, try reducing the number of staged changes.'
+      );
+    }
+  }
 
   const message = await generate(prompt);
 
