@@ -5,6 +5,7 @@ import BackupList from 'resources/gitmojis.json';
 import wasm from 'resources/tiktoken_bg.wasm?module';
 import model from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { init, Tiktoken } from '@dqbd/tiktoken/lite/init';
+import { OpenAIStream } from 'helpers/Stream';
 
 interface Gitmoji {
   code: string;
@@ -219,9 +220,20 @@ export default async function handler(
     }
   }
 
-  const message = await generate(prompt);
-
-  return res.status(200).json({
-    message: parseMessage(message, data.list),
+  const stream = await OpenAIStream({
+    model: 'gpt-3.5-turbo',
+    messages: [{ role: 'user', content: prompt }],
+    temperature: 0.7,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    max_tokens: 300,
+    stream: true,
+    n: 1,
   });
+
+  // Free the encoding to prevent memory leaks
+  encoding.free();
+
+  return new Response(stream);
 }

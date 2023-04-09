@@ -74,8 +74,22 @@ export default function Home() {
           return;
         }
 
-        const data = await response.json();
-        setMessage(data.message);
+        const data = response.body;
+        if (!data) {
+          return;
+        }
+
+        const reader = data.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+          const { value, done } = await reader.read();
+          setMessage((prev) => prev + decoder.decode(value));
+
+          if (done) {
+            break;
+          }
+        }
       } catch (err) {
         // noop
       } finally {
