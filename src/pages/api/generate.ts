@@ -193,7 +193,7 @@ export default async function handler(
 
   const data = await fetchGitmojis();
   let prompt = generatePrompt(
-    req.body.diff,
+    req.body.code,
     data.choices,
     req.body.context,
     false
