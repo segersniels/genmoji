@@ -143,7 +143,7 @@ export default async function handler(
   // Check if exceeding model max token length and minify accordingly
   if (encoding.encode(prompt).length > 4096) {
     prompt = generatePrompt(
-      req.body.diff,
+      req.body.code,
       req.body.choices,
       req.body.context,
       true
