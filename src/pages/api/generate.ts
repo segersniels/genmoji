@@ -1,9 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 // @ts-expect-error
 import wasm from 'resources/tiktoken_bg.wasm?module';
 import model from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { init, Tiktoken } from '@dqbd/tiktoken/lite/init';
 import { OpenAIStream } from 'helpers/Stream';
+import { NextRequest } from 'next/server';
 
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('Missing OPENAI_API_KEY environment variable');
@@ -122,10 +122,7 @@ function generatePrompt(
   `;
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<any>
-) {
+export default async function handler(req: NextRequest) {
   await init((imports) => WebAssembly.instantiate(wasm, imports));
   const encoding = new Tiktoken(
     model.bpe_ranks,
@@ -133,31 +130,23 @@ export default async function handler(
     model.pat_str
   );
 
-  let prompt = generatePrompt(
-    req.body.code,
-    req.body.choices,
-    req.body.context,
-    false
-  );
+  const body = await req.json();
+  let prompt = generatePrompt(body.code, body.choices, body.context, false);
 
   // Check if exceeding model max token length and minify accordingly
   if (encoding.encode(prompt).length > 4096) {
-    prompt = generatePrompt(
-      req.body.code,
-      req.body.choices,
-      req.body.context,
-      true
-    );
+    prompt = generatePrompt(body.code, body.choices, body.context, true);
 
     // Check if minified prompt is still too long
     if (encoding.encode(prompt).length > 4096) {
-      return res
-        .status(400)
-        .send(
-          `The diff is too large (${
-            encoding.encode(prompt).length
-          }), try reducing the number of staged changes.`
-        );
+      return new Response(
+        `The diff is too large (${
+          encoding.encode(prompt).length
+        }), try reducing the number of staged changes.`,
+        {
+          status: 400,
+        }
+      );
     }
   }
 
