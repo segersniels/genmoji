@@ -10,6 +10,7 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
+    "@dqbd/tiktoken": "^1.0.4",
     "@types/node": "18.15.9",
     "@types/react": "18.0.29",
     "@types/react-dom": "18.0.11",
