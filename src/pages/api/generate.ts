@@ -1,17 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { generate } from 'lib/api';
-import BackupList from 'resources/gitmojis.json';
 // @ts-expect-error
 import wasm from 'resources/tiktoken_bg.wasm?module';
 import model from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { init, Tiktoken } from '@dqbd/tiktoken/lite/init';
 import { OpenAIStream } from 'helpers/Stream';
-
-interface Gitmoji {
-  code: string;
-  emoji: string;
-  description: string;
-}
 
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('Missing OPENAI_API_KEY environment variable');
@@ -20,36 +12,6 @@ if (!process.env.OPENAI_API_KEY) {
 export const config = {
   runtime: 'edge',
 };
-
-function generateChoices(gitmojis: Gitmoji[]) {
-  return gitmojis
-    .map((gitmoji) => `${gitmoji.code} - ${gitmoji.description}`)
-    .join('\n');
-}
-
-async function fetchGitmojis() {
-  try {
-    const response = await fetch(
-      'https://raw.githubusercontent.com/carloscuesta/gitmoji/master/packages/gitmojis/src/gitmojis.json'
-    );
-
-    if (response.ok) {
-      const data: { gitmojis: Gitmoji[] } = await response.json();
-
-      return {
-        list: data.gitmojis,
-        choices: generateChoices(data.gitmojis),
-      };
-    }
-  } catch (err) {
-    // noop
-  }
-
-  return {
-    list: BackupList.gitmojis,
-    choices: generateChoices(BackupList.gitmojis),
-  };
-}
 
 const FILES_TO_IGNORE = [
   'package-lock.json',
@@ -97,26 +59,6 @@ function prepareDiff(diff: string, minify = false) {
     })
     .map(removeExcessiveLinesFromChunk)
     .join('\n');
-}
-
-/**
- * Do some additional post processing on the received answer
- */
-function parseMessage(message: string | undefined, gitmojis: Gitmoji[]) {
-  if (!message) {
-    return;
-  }
-
-  // Replace emojis with codes
-  for (const gitmoji of gitmojis) {
-    message = message.replace(gitmoji.emoji, gitmoji.code);
-  }
-
-  // Force only one sentence if for some reason multiple are returned
-  message = message.split('\n')[0];
-
-  // Remove trailing punctuation
-  return message.replace(/\.$/g, '');
 }
 
 function generatePrompt(
@@ -191,10 +133,9 @@ export default async function handler(
     model.pat_str
   );
 
-  const data = await fetchGitmojis();
   let prompt = generatePrompt(
     req.body.code,
-    data.choices,
+    req.body.choices,
     req.body.context,
     false
   );
@@ -203,7 +144,7 @@ export default async function handler(
   if (encoding.encode(prompt).length > 4096) {
     prompt = generatePrompt(
       req.body.diff,
-      data.choices,
+      req.body.choices,
       req.body.context,
       true
     );

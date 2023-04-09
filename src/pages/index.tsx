@@ -10,6 +10,26 @@ import styles from 'styles/Home.module.css';
 import Footer from 'components/Footer';
 import Link from 'next/link';
 import { AiOutlineLoading } from 'react-icons/ai';
+import Gitmoji from 'types/Gitmoji';
+
+/**
+ * Do some additional post processing on the received answer
+ */
+function parseMessage(
+  message: string,
+  gitmojis: { emoji: string; code: string }[]
+) {
+  // Replace emojis with codes
+  for (const gitmoji of gitmojis) {
+    message = message.replace(gitmoji.emoji, gitmoji.code);
+  }
+
+  // Force only one sentence if for some reason multiple are returned
+  message = message.split('\n')[0];
+
+  // Remove trailing punctuation
+  return message.replace(/\.$/g, '');
+}
 
 const TextArea = (
   props: DetailedHTMLProps<
@@ -63,19 +83,30 @@ export default function Home() {
         setMessage('');
         setIsGenerating(true);
 
-        const response = await fetch('/api/generate', {
+        const response = await fetch('/api/gitmojis');
+        if (!response.ok) {
+          return;
+        }
+
+        const gitmojis: { list: Gitmoji[]; choices: string } =
+          await response.json();
+        const generate = await fetch('/api/generate', {
           method: 'POST',
-          body: JSON.stringify({ code, context }),
+          body: JSON.stringify({
+            code,
+            context,
+            choices: gitmojis.choices,
+          }),
           headers: {
             'Content-Type': 'application/json',
           },
         });
 
-        if (!response.ok) {
+        if (!generate.ok) {
           return;
         }
 
-        const data = response.body;
+        const data = generate.body;
         if (!data) {
           return;
         }
@@ -85,7 +116,9 @@ export default function Home() {
 
         while (true) {
           const { value, done } = await reader.read();
-          setMessage((prev) => prev + decoder.decode(value));
+          setMessage((prev) =>
+            parseMessage(prev + decoder.decode(value), gitmojis.list)
+          );
 
           if (done) {
             break;
