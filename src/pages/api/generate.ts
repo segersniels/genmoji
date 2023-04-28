@@ -141,11 +141,11 @@ export default async function handler(req: NextRequest) {
   let prompt = generatePrompt(body.code, body.choices, body.context, false);
 
   // Check if exceeding model max token length and minify accordingly
-  if (encoding.encode(prompt).length > 4096) {
+  if (encoding.encode(prompt).length > 8192) {
     prompt = generatePrompt(body.code, body.choices, body.context, true);
 
     // Check if minified prompt is still too long
-    if (encoding.encode(prompt).length > 4096) {
+    if (encoding.encode(prompt).length > 8192) {
       return new Response(
         `The diff is too large (${
           encoding.encode(prompt).length
@@ -158,7 +158,7 @@ export default async function handler(req: NextRequest) {
   }
 
   const stream = await OpenAIStream({
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.7,
     top_p: 1,
