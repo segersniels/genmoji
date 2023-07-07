@@ -9,6 +9,7 @@ export type ChatGPTAgent = 'user' | 'system';
 export interface ChatGPTMessage {
   role: ChatGPTAgent;
   content: string;
+  name?: string;
 }
 
 export interface OpenAIStreamPayload {

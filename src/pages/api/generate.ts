@@ -159,7 +159,7 @@ export default async function handler(req: NextRequest) {
 
   const stream = await OpenAIStream({
     model: 'gpt-3.5-turbo-16k',
-    messages: [{ role: 'user', content: prompt }],
+    messages: [{ role: 'user', content: prompt, name: 'genmoji' }],
     temperature: 0.7,
     top_p: 1,
     frequency_penalty: 0,
