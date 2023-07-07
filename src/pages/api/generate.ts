@@ -141,11 +141,11 @@ export default async function handler(req: NextRequest) {
   let prompt = generatePrompt(body.code, body.choices, body.context, false);
 
   // Check if exceeding model max token length and minify accordingly
-  if (encoding.encode(prompt).length > 8192) {
+  if (encoding.encode(prompt).length > 16_384) {
     prompt = generatePrompt(body.code, body.choices, body.context, true);
 
     // Check if minified prompt is still too long
-    if (encoding.encode(prompt).length > 8192) {
+    if (encoding.encode(prompt).length > 16_384) {
       return new Response(
         `The diff is too large (${
           encoding.encode(prompt).length
