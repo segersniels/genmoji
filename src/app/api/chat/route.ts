@@ -1,7 +1,10 @@
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { generateSystemMessage } from 'helpers/Generate';
-import { ChatCompletionRequestMessage } from 'openai';
-import { Configuration, OpenAIApi } from 'openai-edge';
+import {
+  Configuration,
+  OpenAIApi,
+  ChatCompletionRequestMessage,
+} from 'openai-edge';
 
 export const runtime = 'edge';
 
