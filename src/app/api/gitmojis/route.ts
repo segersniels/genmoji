@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import BackupList from 'resources/gitmojis.json';
 import Gitmoji from 'types/Gitmoji';
 
@@ -8,10 +8,7 @@ function generateChoices(gitmojis: Gitmoji[]) {
     .join('\n');
 }
 
-export default async function handler(
-  _req: NextApiRequest,
-  res: NextApiResponse<any>
-) {
+export async function GET() {
   try {
     const response = await fetch(
       'https://raw.githubusercontent.com/carloscuesta/gitmoji/master/packages/gitmojis/src/gitmojis.json'
@@ -20,17 +17,15 @@ export default async function handler(
     if (response.ok) {
       const data: { gitmojis: Gitmoji[] } = await response.json();
 
-      return res.json({
+      return NextResponse.json({
         list: data.gitmojis,
         choices: generateChoices(data.gitmojis),
       });
     }
   } catch (err) {
-    // noop
+    return NextResponse.json({
+      list: BackupList.gitmojis,
+      choices: generateChoices(BackupList.gitmojis),
+    });
   }
-
-  return res.json({
-    list: BackupList.gitmojis,
-    choices: generateChoices(BackupList.gitmojis),
-  });
 }

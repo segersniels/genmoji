@@ -11,22 +11,27 @@
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.4",
-    "@types/node": "18.15.9",
-    "@types/react": "18.0.29",
-    "@types/react-dom": "18.0.11",
     "@vercel/analytics": "^0.1.11",
+    "ai": "^2.1.26",
     "autoprefixer": "^10.4.14",
-    "eslint": "8.36.0",
-    "eslint-config-next": "13.2.4",
     "eventsource-parser": "^1.0.0",
-    "next": "13.2.4",
+    "next": "^13.4.12",
     "openai": "^3.2.1",
+    "openai-edge": "^1.2.2",
     "postcss": "^8.4.21",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
     "react-toggle": "^4.1.3",
     "tailwindcss": "^3.2.7",
-    "typescript": "5.0.2"
+    "use-local-storage-state": "^18.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "18.15.9",
+    "@types/react": "^18.2.16",
+    "@types/react-dom": "18.0.11",
+    "eslint": "8.36.0",
+    "eslint-config-next": "13.2.4",
+    "typescript": "^5.1.6"
   }
 }

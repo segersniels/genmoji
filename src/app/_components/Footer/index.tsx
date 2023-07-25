@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import styles from './Footer.module.css';
 import { FaGithub, FaNpm } from 'react-icons/fa';
+
+import styles from './styles.module.css';
 
 const Footer = () => {
   return (
