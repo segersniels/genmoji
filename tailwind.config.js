@@ -17,10 +17,6 @@ module.exports = {
     },
     extend: {
       colors: {
-        gradient: {
-          from: 'rgb(236, 63, 251)',
-          to: 'rgb(252, 229, 70)',
-        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
