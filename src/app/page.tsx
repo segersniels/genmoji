@@ -1,32 +1,21 @@
 import Link from 'next/link';
-import Gitmoji from 'types/Gitmoji';
 
 import styles from './styles.module.css';
-import Form from './_components/Form';
+import Form from 'components/form';
+import { getGitmojis } from './actions';
 
-async function fetchGitmojis(): Promise<{
-  list: Gitmoji[];
-  choices: string;
-}> {
-  const response = await fetch(`${process.env.HOST}/api/gitmojis`);
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch gitmojis');
-  }
-
-  return response.json();
-}
+export const runtime = 'edge';
 
 export default async function Page() {
-  const gitmojis = await fetchGitmojis();
+  const gitmojis = await getGitmojis();
 
   return (
-    <div className={styles.wrapper}>
-      <h1 className={styles.title}>
+    <div className="max-w-xl w-full">
+      <h1 className="text-7xl font-bold text-center mb-8 tracking-tighter">
         Generate your{' '}
         <Link
           href="https://gitmoji.dev"
-          className={styles.gitmoji}
+          className='underline'
           target="_blank"
         >
           gitmoji

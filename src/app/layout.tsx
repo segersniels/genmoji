@@ -1,9 +1,9 @@
-import 'styles/globals.css';
+import './globals.css';
 
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 
-import Footer from './_components/Footer';
+import Footer from 'components/footer';
 import styles from './styles.module.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -25,12 +25,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <div className={styles.container}>
+        <main className="flex mx-auto flex-col items-center justify-center p-4 min-h-screen bg-muted/50">
           {children}
+
           <Footer />
-        </div>
+        </main>
 
         <Analytics />
       </body>

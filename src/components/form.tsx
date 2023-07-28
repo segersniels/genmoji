@@ -4,26 +4,13 @@ import { useChat } from 'ai/react';
 import { useEffect, useState } from 'react';
 import Gitmoji from 'types/Gitmoji';
 import { AiOutlineLoading } from 'react-icons/ai';
+
+import { Textarea } from './ui/textarea';
+import { Button } from './ui/button';
+import Style from 'enums/Style';
+import StyleSelect from './style-select';
 import useLocalStorageState from 'use-local-storage-state';
-
-import styles from './styles.module.css';
-import Dropdown from './Dropdown';
-
-enum Style {
-  Emoji = 'emoji',
-  Code = 'code',
-}
-
-const STYLE_OPTIONS = [
-  {
-    display: '👋',
-    value: Style.Emoji,
-  },
-  {
-    display: ':code:',
-    value: Style.Code,
-  },
-];
+import { Separator } from './ui/separator';
 
 interface Props {
   gitmojis: {
@@ -56,28 +43,6 @@ function parseMessage(
   // Remove trailing punctuation
   return message.replace(/\.$/g, '');
 }
-
-const GenerateButton = ({
-  disabled,
-  isGenerating,
-}: {
-  disabled: boolean;
-  isGenerating: boolean;
-}) => {
-  if (isGenerating) {
-    return (
-      <button type="submit" className={styles.button} disabled={disabled}>
-        <AiOutlineLoading className="animate-spin font-bold mx-2 stroke-[3rem]" />
-      </button>
-    );
-  }
-
-  return (
-    <button type="submit" className={styles.button} disabled={disabled}>
-      Generate
-    </button>
-  );
-};
 
 export default function Form(props: Props) {
   const { gitmojis, onGenerate } = props;
@@ -116,12 +81,11 @@ export default function Form(props: Props) {
   }, [generatedMessage, onGenerate]);
 
   return (
-    <>
-      <Dropdown
-        className={styles.dropdown}
-        value={style}
-        options={STYLE_OPTIONS}
-        onChange={(value) => setStyle(value.value)}
+    <div className="py-4">
+      <StyleSelect
+        className="absolute top-4 right-4"
+        style={style}
+        setStyle={setStyle}
       />
 
       <form
@@ -135,31 +99,37 @@ export default function Form(props: Props) {
           setInput(diff);
         }}
       >
-        <textarea
-          className={styles.textarea}
+        <Textarea
+          className="min-h-[60px] flex-1 resize-none border px-4 py-[1.3rem] shadow-none sm:text-sm"
           value={diff}
           placeholder="Please paste a diff or code snippet here"
           onChange={(e) => setDiff(e.target.value)}
           rows={10}
         />
 
-        <GenerateButton disabled={!diff.length} isGenerating={isLoading} />
+        <Button className="w-full my-2" disabled={!diff.length}>
+          {isLoading ? (
+            <AiOutlineLoading className="animate-spin font-bold mx-2 stroke-[3rem]" />
+          ) : (
+            'Generate'
+          )}
+        </Button>
       </form>
 
       {!!generatedMessage && (
         <>
-          <hr className="my-4 w-64 mx-auto" />
+          <Separator className="my-4 w-64 mx-auto" />
 
           <div
-            className={styles.message}
+            className="flex flex-col items-center p-4 shadow-md rounded-md border border-gray-100 hover:bg-gray-50 cursor-copy"
             onClick={() => {
               return navigator.clipboard.writeText(generatedMessage);
             }}
           >
-            <p>{generatedMessage}</p>
+            <code>{generatedMessage}</code>
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }
