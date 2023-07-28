@@ -1,6 +1,5 @@
 import Link from 'next/link';
 
-import styles from './styles.module.css';
 import Form from 'components/form';
 import { getGitmojis } from './actions';
 
@@ -13,11 +12,7 @@ export default async function Page() {
     <div className="max-w-xl w-full">
       <h1 className="text-7xl font-bold text-center mb-8 tracking-tighter">
         Generate your{' '}
-        <Link
-          href="https://gitmoji.dev"
-          className='underline'
-          target="_blank"
-        >
+        <Link href="https://gitmoji.dev" className="underline" target="_blank">
           gitmoji
         </Link>{' '}
         commit message 👋
