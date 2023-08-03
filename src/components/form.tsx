@@ -3,7 +3,7 @@
 import { useChat } from 'ai/react';
 import { useEffect, useState } from 'react';
 import Gitmoji from 'types/Gitmoji';
-import { AiOutlineLoading } from 'react-icons/ai';
+import { AiOutlineLoading, AiOutlineCopy } from 'react-icons/ai';
 
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
@@ -26,7 +26,7 @@ interface Props {
 function parseMessage(
   message: string,
   gitmojis: { emoji: string; code: string }[],
-  style: Style
+  style: Style,
 ) {
   // Force emojis to desired style
   for (const gitmoji of gitmojis) {
@@ -98,16 +98,18 @@ export default function Form(props: Props) {
         }}
       >
         <Textarea
-          className="min-h-[60px] flex-1 resize-none border px-4 py-[1.3rem] shadow-none sm:text-sm"
+          className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
           value={diff}
           placeholder="Please paste a diff or code snippet here"
           onChange={(e) => setDiff(e.target.value)}
-          rows={10}
+          tabIndex={0}
+          rows={5}
+          spellCheck={false}
         />
 
-        <Button className="w-full my-2" disabled={!diff.length}>
+        <Button className="my-2 w-full" disabled={!diff.length}>
           {isLoading ? (
-            <AiOutlineLoading className="animate-spin font-bold mx-2 stroke-[3rem]" />
+            <AiOutlineLoading className="mx-2 animate-spin stroke-[3rem] font-bold" />
           ) : (
             'Generate'
           )}
@@ -116,15 +118,19 @@ export default function Form(props: Props) {
 
       {!!generatedMessage && (
         <>
-          <Separator className="my-4 w-64 mx-auto" />
+          <Separator className="my-4 mx-auto w-64" />
 
-          <div
-            className="flex flex-col items-center p-4 shadow-md rounded-md border border-gray-100 hover:bg-gray-50 cursor-copy"
-            onClick={() => {
-              return navigator.clipboard.writeText(generatedMessage);
-            }}
-          >
-            <code>{generatedMessage}</code>
+          <div className="relative rounded-md border border-gray-100 p-4 shadow-md hover:bg-gray-50">
+            <AiOutlineCopy
+              className="absolute top-2 right-2 cursor-pointer text-slate-400 hover:text-slate-700"
+              onClick={() => {
+                return navigator.clipboard.writeText(generatedMessage);
+              }}
+            />
+
+            <div className="prose text-center font-mono text-pink-400">
+              <p>{generatedMessage}</p>
+            </div>
           </div>
         </>
       )}
