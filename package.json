@@ -35,8 +35,11 @@
     "@types/node": "18.15.9",
     "@types/react": "^18.2.16",
     "@types/react-dom": "18.0.11",
-    "eslint": "8.36.0",
-    "eslint-config-next": "13.2.4",
+    "eslint": "^8.46.0",
+    "eslint-config-next": "^13.4.12",
+    "eslint-config-prettier": "^8.10.0",
+    "prettier": "^2.8.8",
+    "prettier-plugin-tailwindcss": "^0.4.1",
     "typescript": "^5.1.6"
   }
 }
