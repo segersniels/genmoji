@@ -9,8 +9,8 @@ import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
 import Style from 'enums/Style';
 import StyleSelect from './style-select';
-import useLocalStorageState from 'use-local-storage-state';
 import { Separator } from './ui/separator';
+import useLocalStorage from 'hooks/use-local-storage';
 
 interface Props {
   gitmojis: {
@@ -47,9 +47,7 @@ function parseMessage(
 export default function Form(props: Props) {
   const { gitmojis, onGenerate } = props;
   const [diff, setDiff] = useState('');
-  const [style, setStyle] = useLocalStorageState<Style>('style', {
-    defaultValue: Style.Code,
-  });
+  const [style, setStyle] = useLocalStorage<Style>('style', Style.Code);
 
   const { messages, setInput, handleSubmit, isLoading } = useChat({
     body: {
