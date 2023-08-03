@@ -1,16 +1,37 @@
 'use server';
 
 import Gitmoji from 'types/Gitmoji';
+import BackupList from 'resources/gitmojis.json';
 
-export async function getGitmojis(): Promise<{
-  list: Gitmoji[];
-  choices: string;
-}> {
-  const response = await fetch(`${process.env.HOST}/api/gitmojis`);
+function generateChoices(gitmojis: Gitmoji[]) {
+  return gitmojis
+    .map((gitmoji) => `${gitmoji.code} - ${gitmoji.description}`)
+    .join('\n');
+}
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch gitmojis');
+export async function getGitmojis() {
+  try {
+    const response = await fetch(
+      'https://raw.githubusercontent.com/carloscuesta/gitmoji/master/packages/gitmojis/src/gitmojis.json'
+    );
+
+    if (!response.ok) {
+      return {
+        list: BackupList.gitmojis,
+        choices: generateChoices(BackupList.gitmojis),
+      };
+    }
+
+    const data: { gitmojis: Gitmoji[] } = await response.json();
+
+    return {
+      list: data.gitmojis,
+      choices: generateChoices(data.gitmojis),
+    };
+  } catch (err) {
+    return {
+      list: BackupList.gitmojis,
+      choices: generateChoices(BackupList.gitmojis),
+    };
   }
-
-  return response.json();
 }
