@@ -16,6 +16,12 @@ export const metadata = {
     description: 'Generate your gitmoji commit message',
     images: ['https://genmoji.xyz/og-image.png'],
   },
+  openGraph: {
+    title: 'Genmoji',
+    description: 'Generate your gitmoji commit message',
+    images: ['https://genmoji.xyz/og-image.png'],
+    url: 'https://genmoji.xyz',
+  },
 };
 
 export default function RootLayout({
