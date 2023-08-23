@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <main className="flex mx-auto flex-col items-center justify-center p-4 min-h-screen bg-muted/50">
+        <main className="mx-auto flex min-h-screen flex-col items-center justify-center bg-muted/50 p-4">
           {children}
 
           <Footer />
