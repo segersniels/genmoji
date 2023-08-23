@@ -9,13 +9,13 @@ export default async function Page() {
   const gitmojis = await getGitmojis();
 
   return (
-    <div className="max-w-xl w-full">
-      <h1 className="text-7xl font-bold text-center mb-8 tracking-tighter">
+    <div className="w-full max-w-xl">
+      <h1 className="mb-4 text-center text-5xl font-bold tracking-tighter sm:mb-8 sm:text-7xl">
         Generate your{' '}
-        <Link href="https://gitmoji.dev" className="underline" target="_blank">
-          gitmoji
+        <Link href="https://gitmoji.dev" target="_blank">
+          gitm<p className="inline text-4xl sm:text-5xl">😀</p>ji
         </Link>{' '}
-        commit message 👋
+        commit message.
       </h1>
 
       <Form gitmojis={gitmojis} />

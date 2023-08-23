@@ -9,16 +9,19 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'Genmoji',
-  description: 'Generate your gitmoji commit message',
+  description:
+    'Generate your gitmoji commit message using AI. Provide a git diff and let Genmoji do the work for you.',
   twitter: {
     card: 'summary_large_image',
     title: 'Genmoji',
-    description: 'Generate your gitmoji commit message',
+    description:
+      'Generate your gitmoji commit message using AI. Provide a git diff and let Genmoji do the work for you.',
     images: ['https://genmoji.xyz/og-image.png'],
   },
   openGraph: {
     title: 'Genmoji',
-    description: 'Generate your gitmoji commit message',
+    description:
+      'Generate your gitmoji commit message using AI. Provide a git diff and let Genmoji do the work for you.',
     images: ['https://genmoji.xyz/og-image.png'],
     url: 'https://genmoji.xyz',
   },
