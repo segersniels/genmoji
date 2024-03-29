@@ -18,10 +18,10 @@ pub fn main() !void {
 
     // Skip the first argument (program name) and start processing from the second
     for (args[1..]) |arg| {
-        if (std.mem.eql(u8, arg, "--help") || std.mem.eql(u8, arg, "-h")) {
+        if (std.mem.eql(u8, arg, "--help") or std.mem.eql(u8, arg, "-h")) {
             try printHelp();
             return;
-        } else if (std.mem.eql(u8, arg, "--version") || std.mem.eql(u8, arg, "-v")) {
+        } else if (std.mem.eql(u8, arg, "--version") or std.mem.eql(u8, arg, "-v")) {
             try printVersion();
             return;
         } else {
