@@ -1,7 +1,7 @@
 # genmoji.xyz
 
 <p align="center">
-<img src="./public/og-image.png">
+<img src="./apps/web/public/og-image.png">
 
 [Genmoji](https://genmoji.xyz) is a [website](https://genmoji.xyz) that uses the ChatGPT API to generate commit messages from code snippets or `git diff`. With [Genmoji](https://genmoji.xyz), developers can easily create informative and concise commit messages, using the [gitmoji](https://gitmoji.dev) standard, without spending time and effort writing them themselves.
 
