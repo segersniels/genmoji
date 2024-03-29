@@ -19,9 +19,9 @@ A simple example can be that when you see an incorrect gitmoji being used, you c
 
 ### Terminal
 
-To generate commit messages in your terminal from your current staged changes you can make use of `@segersniels/gitmoji`. It's a simplified and opinionated version of the original gitmoji tool.
+Grab a binary from the releases page, rename and run it:
 
 ```bash
-yarn global add @segersniels/gitmoji
-gitmoji commit --generate
+$ genmoji --help
+Usage: genmoji [--version] [--help]
 ```
