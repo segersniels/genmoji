@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
+    "build:ci": "turbo build:ci",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix"
   },
