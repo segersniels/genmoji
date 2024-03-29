@@ -41,3 +41,4 @@ next-env.d.ts
 # zig
 zig-cache/
 zig-out/
+bin/

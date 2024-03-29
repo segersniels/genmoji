@@ -44,11 +44,13 @@ jobs:
         id: check_tag
         with:
           tag: '${{ steps.current_version.outputs.version }}'
+      - run: ./scripts/rename.sh
+        working-directory: apps/cli
       - uses: ncipollo/release-action@v1
-        # if: steps.check_tag.outputs.exists == 'false'
+        if: steps.check_tag.outputs.exists == 'false'
         with:
           tag: '${{ steps.current_version.outputs.version }}'
-          artifacts: 'apps/cli/zig-out/**/*'
+          artifacts: 'apps/cli/bin/*'
           generateReleaseNotes: true
           makeLatest: true
           prerelease: false
