@@ -44,10 +44,12 @@ jobs:
         id: check_tag
         with:
           tag: '${{ steps.current_version.outputs.version }}'
-      - uses: marvinpinto/action-automatic-releases@latest
-        if: steps.check_tag.outputs.exists == 'false'
+      - uses: ncipollo/release-action@v1
+        # if: steps.check_tag.outputs.exists == 'false'
         with:
-          repo_token: '${{ secrets.GITHUB_TOKEN }}'
-          automatic_release_tag: '${{ steps.current_version.outputs.version }}'
+          tag: '${{ steps.current_version.outputs.version }}'
+          artifacts: 'apps/cli/zig-out/**/*'
+          generateReleaseNotes: true
+          makeLatest: true
           prerelease: false
-          files: ./apps/cli/zig-out/*
+          replacesArtifacts: true
