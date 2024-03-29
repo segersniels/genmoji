@@ -36,3 +36,24 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
       - run: npm run build:ci --workspace cli
+      - name: Get current package version
+        id: current_version
+        run: echo "version=$(grep '.version =' build.zig.zon | sed 's/.*.version = "\([^"]*\)".*/\1/')" >> $GITHUB_OUTPUT
+        working-directory: apps/cli
+      - uses: mukunku/tag-exists-action@v1.4.0
+        id: check_tag
+        with:
+          tag: steps.current_version.version
+      - name: Archive production artifacts
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: bin
+          path: ./apps/cli/zig-out/*
+      # - uses: 'marvinpinto/action-automatic-releases@latest'
+      #   if: steps.check_tag.outputs.exists == 'false'
+      #   with:
+      #     repo_token: '${{ secrets.GITHUB_TOKEN }}'
+      #     automatic_release_tag: steps.current_version.version
+      #     prerelease: false
+      #     files: ./apps/cli/zig-out/*
