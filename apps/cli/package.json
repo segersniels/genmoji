@@ -2,6 +2,7 @@
   "name": "cli",
   "scripts": {
     "build": "zig build --summary all",
-    "build:ci": "CI=true npm run build"
+    "build:ci": "CI=true npm run build",
+    "lint": "zig fmt --check ."
   }
 }
