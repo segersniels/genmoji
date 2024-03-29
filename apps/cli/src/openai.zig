@@ -1,4 +1,5 @@
 const std = @import("std");
+const emoji = @import("emoji.zig");
 
 const Message = struct {
     role: []const u8,
@@ -18,24 +19,20 @@ const CompletionResponse = struct {
     choices: []Choice,
 };
 
-/// TODO: Provide proper gitmoji list to more accurately match the descriptions.
 const SYSTEM_MESSAGE =
-    \\ You are a helpful coding assisting responsible for generating fitting commit messages.
+    \\ You are a helpful coding assistant responsible for generating fitting commit messages.
     \\ You will be provided a git diff or code snippet and you are expected to provide a suitable commit message.
     \\ If a user provides anything else than you are expecting respond with a fitting message and ask for the correct input (don't include emojis in this message).
     \\
     \\ When reviewing the diff or code, focus on identifying the main purpose of the changes.
-    \\ Are they fixing a bug, adding a new feature, improving performance or readability, or something else?
-    \\ Use this information to craft a concise and detailed gitmoji commit message that clearly describes what the provided code or diff does.
-    \\
-    \\ Describe the change to the best of your capabilities in one short sentence. Don't go into too much detail.
+    \\ Describe the change to the best of your capabilities in a maximum of one short sentence on one line.
     \\
     \\ When reviewing a diff, pay attention to the changed filenames and extract the context of the changes.
     \\ This will help you create a more relevant and informative commit message.
     \\ Here are some examples of how you can interpret some changed filenames:
-    \\     - Files or filepaths that reference testing are usually related to tests.
-    \\     - Markdown files are usually related to documentation.
-    \\     - Config file adjustments are usually related to configuration changes.
+    \\  - Files or filepaths that reference testing are usually related to tests.
+    \\  - Markdown files are usually related to documentation.
+    \\  - Config file adjustments are usually related to configuration changes.
     \\
     \\ Try to match the generated message to a fitting emoji using its description from the provided list above.
     \\ So go look in the descriptions and find the one that best matches the description.
@@ -43,17 +40,10 @@ const SYSTEM_MESSAGE =
     \\ Always start your commit message with a gitmoji followed by the message starting with a capital letter.
     \\ Never mention filenames or function names in the message.
     \\
-    \\ Don't do this:
-    \\     - :bug: Fix issue in calculateTotalPrice function
-    \\     - :zap: Improve performance of calculateTopProducts function
-    \\     - :lipstick: Refactor styling for calculateCartTotal function
-    \\     - :memo: Update documentation for getProductById function
+    \\ Below you can find a list of available gitmojis and their descriptions. Try to look for a fitting emoji and message.
+    \\ Use the code representation of the emoji in the commit message.
     \\
-    \\ Do this:
-    \\     - :bug: Fix issue with shopping cart checkout process
-    \\     - :zap: Improve performance of search functionality
-    \\     - :lipstick: Refactor styling for product details page
-    \\     - :memo: Update documentation for API endpoints
+    \\ A gitmoji commit message should look like the following: :code: Your message here
 ;
 
 pub fn getCompletion(allocator: std.mem.Allocator, prompt: []const u8) !CompletionResponse {
@@ -71,13 +61,16 @@ pub fn getCompletion(allocator: std.mem.Allocator, prompt: []const u8) !Completi
     const bearer_token = try std.fmt.allocPrint(allocator, "Bearer {s}", .{api_key});
     const headers = std.http.Client.Request.Headers{ .authorization = std.http.Client.Request.Headers.Value{ .override = bearer_token }, .content_type = std.http.Client.Request.Headers.Value{ .override = "application/json" } };
 
+    const gitmojis = try emoji.fetchGitmojis(allocator);
+    const system_message = try std.fmt.allocPrint(allocator, "{s}\n\nHere's an overview of available gitmojis and when they should be used:\n{s}", .{ SYSTEM_MESSAGE, std.json.fmt(gitmojis.gitmojis, .{}) });
+
     var messages = std.ArrayList(Message).init(allocator);
-    try messages.append(.{ .role = "system", .content = SYSTEM_MESSAGE });
+    try messages.append(.{ .role = "system", .content = system_message });
     try messages.append(.{ .role = "user", .content = prompt });
 
     const request = CompletionRequest{
         .messages = messages.items,
-        .model = "gpt-3.5-turbo",
+        .model = "gpt-4-turbo-preview",
     };
     defer messages.deinit();
 
