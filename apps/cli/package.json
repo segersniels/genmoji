@@ -1,0 +1,6 @@
+{
+  "name": "cli",
+  "scripts": {
+    "build": "zig build"
+  }
+}
