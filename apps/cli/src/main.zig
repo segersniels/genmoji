@@ -31,6 +31,11 @@ pub fn main() !void {
     }
 
     const diff = try git.getStagedChanges(allocator);
+    if (diff.len == 0) {
+        try std.io.getStdOut().writer().print("No changes to commit\n", .{});
+        return;
+    }
+
     const response = try openai.getCompletion(allocator, diff);
 
     try std.io.getStdOut().writer().print("{s}\n", .{response.choices[0].message.content});
