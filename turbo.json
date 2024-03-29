@@ -3,7 +3,11 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
+      "outputs": ["dist/**", ".next/**", "zig-cache/**", "zig-out/**"]
+    },
+    "build:ci": {
+      "dependsOn": ["^build:ci"],
+      "outputs": ["dist/**", ".next/**", "zig-cache/**", "zig-out/**"]
     },
     "lint": {},
     "lint:fix": {}
