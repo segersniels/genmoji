@@ -1,6 +1,7 @@
 {
   "name": "cli",
   "scripts": {
-    "build": "zig build"
+    "build": "zig build --summary all",
+    "build:ci": "CI=true npm run build"
   }
 }
