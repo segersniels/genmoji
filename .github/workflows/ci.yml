@@ -25,6 +25,7 @@ jobs:
   build:
     needs: [lint]
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
       - uses: goto-bus-stop/setup-zig@v2
