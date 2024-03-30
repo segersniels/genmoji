@@ -7,21 +7,15 @@ const targets: []const std.Target.Query = &.{
     .{ .cpu_arch = .x86_64, .os_tag = .linux, .abi = .musl },
 };
 
-/// Attempt to read a file from the current working directory
-fn readFile(allocator: std.mem.Allocator, filename: []const u8) ![]u8 {
-    const file = try std.fs.cwd().openFile(filename, .{});
-    defer file.close();
-
-    const stat = try file.stat();
-    return try file.readToEndAlloc(allocator, stat.size);
-}
-
 /// Extract the version information from the `build.zig.zon` config file
 ///
 /// TODO: Figure out a proper way to parse the `.zon` file and extract the version...
 pub fn extractVersion(allocator: std.mem.Allocator) !?[]const u8 {
     var version: ?[]const u8 = null;
-    const content = try readFile(allocator, "build.zig.zon");
+    const file = try std.fs.cwd().openFile("build.zig.zon", .{});
+    defer file.close();
+    const stat = try file.stat();
+    const content = try file.readToEndAlloc(allocator, stat.size);
 
     // Go over all lines in the config file
     var lines = std.mem.split(u8, content, "\n");
