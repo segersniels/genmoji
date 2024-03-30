@@ -1,6 +1,7 @@
 {
   "name": "cli",
   "scripts": {
+    "version": "cat build.zig.zon |grep .version |awk -F' ' '{print $3}' |tr -d '\",'",
     "build": "zig build --summary all",
     "build:ci": "CI=true npm run build",
     "lint": "zig fmt --check ."

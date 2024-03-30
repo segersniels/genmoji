@@ -38,7 +38,7 @@ jobs:
       - run: npm run build:ci --workspace cli
       - name: Get current package version
         id: current_version
-        run: echo "version=$(./scripts/version.sh)" >> $GITHUB_OUTPUT
+        run: echo "version=$(npm run version)" >> $GITHUB_OUTPUT
         working-directory: apps/cli
       - uses: mukunku/tag-exists-action@v1.4.0
         id: check_tag
