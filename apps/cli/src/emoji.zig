@@ -1,5 +1,7 @@
 const std = @import("std");
 
+const CACHE_FILE = ".genmoji/gitmoji.json";
+
 const Gitmoji = struct {
     emoji: []u8,
     code: []u8,
@@ -11,7 +13,7 @@ const Response = struct {
     gitmojis: []Gitmoji,
 };
 
-fn determineCacheDirectory(allocator: std.mem.Allocator) !?[]u8 {
+fn getPath(allocator: std.mem.Allocator) !?[]u8 {
     var env = try std.process.getEnvMap(allocator);
     defer env.deinit();
 
@@ -19,11 +21,7 @@ fn determineCacheDirectory(allocator: std.mem.Allocator) !?[]u8 {
         return null;
     };
 
-    return try std.fmt.allocPrint(allocator, "{s}/.genmoji", .{homedir});
-}
-
-fn determineCacheFilename(allocator: std.mem.Allocator, directory: []u8) !?[]u8 {
-    return try std.fmt.allocPrint(allocator, "{s}/gitmoji.json", .{directory});
+    return try std.fmt.allocPrint(allocator, "{s}/{s}", .{ homedir, CACHE_FILE });
 }
 
 fn checkIfExists(path: []u8) bool {
@@ -35,19 +33,15 @@ fn checkIfExists(path: []u8) bool {
 }
 
 fn fetchFromCache(allocator: std.mem.Allocator) !?Response {
-    const directory = try determineCacheDirectory(allocator) orelse {
+    const path = try getPath(allocator) orelse {
         return null;
     };
 
-    const filename = try determineCacheFilename(allocator, directory) orelse {
-        return null;
-    };
-
-    if (!checkIfExists(filename)) {
+    if (!checkIfExists(path)) {
         return null;
     }
 
-    const file = try std.fs.openFileAbsolute(filename, .{});
+    const file = try std.fs.openFileAbsolute(path, .{});
     defer file.close();
 
     const stat = try file.stat();
@@ -58,16 +52,12 @@ fn fetchFromCache(allocator: std.mem.Allocator) !?Response {
 }
 
 fn writeToCache(allocator: std.mem.Allocator, data: Response) !void {
-    const directory = try determineCacheDirectory(allocator) orelse {
+    const path = try getPath(allocator) orelse {
         return;
     };
 
-    const filename = try determineCacheFilename(allocator, directory) orelse {
-        return;
-    };
-
-    try std.fs.makeDirAbsolute(directory);
-    const file = try std.fs.createFileAbsolute(filename, .{ .truncate = true });
+    try std.fs.makeDirAbsolute(std.fs.path.dirname(path).?);
+    const file = try std.fs.createFileAbsolute(path, .{ .truncate = true });
     defer file.close();
 
     var string = std.ArrayList(u8).init(allocator);
@@ -81,8 +71,13 @@ pub fn fetchGitmojis(allocator: std.mem.Allocator) !Response {
     defer client.deinit();
 
     // Check if we have a cached version of the gitmojis
-    if (try fetchFromCache(allocator)) |cache| {
-        return cache;
+    if (fetchFromCache(allocator)) |cache| {
+        // TODO: Figure out a cleaner way to catch the error and only return on actual cache hit
+        if (cache) |value| {
+            return value;
+        }
+    } else |err| {
+        std.log.debug("Warning: Ignoring error while fetching from cache: {}\n", .{err});
     }
 
     const headers = std.http.Client.Request.Headers{ .content_type = std.http.Client.Request.Headers.Value{ .override = "application/json" } };
@@ -92,7 +87,9 @@ pub fn fetchGitmojis(allocator: std.mem.Allocator) !Response {
     const data = try std.json.parseFromSlice(Response, allocator, body.items, .{ .allocate = .alloc_always, .ignore_unknown_fields = true });
 
     // Update cache
-    try writeToCache(allocator, data.value);
+    writeToCache(allocator, data.value) catch |err| {
+        std.log.debug("Warning: Ignoring error while writing to cache: {}\n", .{err});
+    };
 
     return data.value;
 }
