@@ -4,8 +4,8 @@ const openai = @import("openai.zig");
 const git = @import("git.zig");
 const cli = @import("zig-cli");
 
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-const allocator = gpa.allocator();
+var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+const allocator = arena.allocator();
 
 var config = struct {
     model: []const u8 = "gpt-4-turbo-preview",
@@ -41,5 +41,7 @@ var app = &cli.App{
 };
 
 pub fn main() !void {
+    defer arena.deinit();
+
     return cli.run(app, allocator);
 }
