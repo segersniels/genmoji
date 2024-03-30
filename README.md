@@ -19,7 +19,7 @@ A simple example can be that when you see an incorrect gitmoji being used, you c
 
 ### Terminal
 
-Grab a binary from the releases page, rename and run it:
+Grab a binary from the [releases](https://github.com/segersniels/genmoji/releases) page, rename and run it:
 
 ```bash
 $ genmoji --help
