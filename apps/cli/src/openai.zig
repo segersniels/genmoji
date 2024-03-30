@@ -46,7 +46,7 @@ const SYSTEM_MESSAGE =
     \\ A gitmoji commit message should look like the following: :code: Your message here
 ;
 
-pub fn getCompletion(allocator: std.mem.Allocator, prompt: []const u8) !CompletionResponse {
+pub fn getCompletion(allocator: std.mem.Allocator, prompt: []const u8, model: []const u8) !CompletionResponse {
     var env = try std.process.getEnvMap(allocator);
     defer env.deinit();
 
@@ -70,7 +70,7 @@ pub fn getCompletion(allocator: std.mem.Allocator, prompt: []const u8) !Completi
 
     const request = CompletionRequest{
         .messages = messages.items,
-        .model = "gpt-4-turbo-preview",
+        .model = model,
     };
     defer messages.deinit();
 

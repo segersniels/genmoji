@@ -59,6 +59,10 @@ pub fn build_impl(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std
         .optimize = optimize,
     });
 
+    const zigcli_dep = b.dependency("zig-cli", .{ .target = target });
+    const zigcli_mod = zigcli_dep.module("zig-cli");
+    exe.root_module.addImport("zig-cli", zigcli_mod);
+
     // Expose the specified version from build.zig.zon to the executable
     var options = b.addOptions();
     if (try extractVersion(b.allocator)) |version| {

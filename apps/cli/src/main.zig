@@ -2,44 +2,44 @@ const std = @import("std");
 const package = @import("package");
 const openai = @import("openai.zig");
 const git = @import("git.zig");
+const cli = @import("zig-cli");
 
-fn printVersion() !void {
-    try std.io.getStdOut().writer().print("genmoji version {s}\n", .{package.version});
-}
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+const allocator = gpa.allocator();
 
-fn printHelp() !void {
-    try std.io.getStdOut().writer().print("Usage: genmoji [--version] [--help]\n", .{});
-}
+var config = struct {
+    model: []const u8 = "gpt-4-turbo-preview",
+}{};
 
-pub fn main() !void {
-    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-    defer arena.deinit();
-    const allocator = arena.allocator();
+var model = cli.Option{
+    .long_name = "model",
+    .help = "OpenAI model to use",
+    .value_ref = cli.mkRef(&config.model),
+};
 
-    const args = try std.process.argsAlloc(allocator);
-    defer std.process.argsFree(allocator, args);
-
-    // Skip the first argument (program name) and start processing from the second
-    for (args[1..]) |arg| {
-        if (std.mem.eql(u8, arg, "--help") or std.mem.eql(u8, arg, "-h")) {
-            try printHelp();
-            return;
-        } else if (std.mem.eql(u8, arg, "--version") or std.mem.eql(u8, arg, "-v")) {
-            try printVersion();
-            return;
-        } else {
-            std.debug.print("Unknown argument: {s}\n", .{arg});
-            std.process.exit(0);
-        }
-    }
-
+fn generate() !void {
     const diff = try git.getStagedChanges(allocator);
     if (diff.len == 0) {
         try std.io.getStdOut().writer().print("No changes to commit\n", .{});
         return;
     }
 
-    const response = try openai.getCompletion(allocator, diff);
+    const response = try openai.getCompletion(allocator, diff, config.model);
 
     try std.io.getStdOut().writer().print("{s}\n", .{response.choices[0].message.content});
+}
+
+var app = &cli.App{
+    .command = cli.Command{
+        .name = "genmoji",
+        .options = &.{&model},
+        .target = cli.CommandTarget{
+            .action = cli.CommandAction{ .exec = generate },
+        },
+    },
+    .version = package.version,
+};
+
+pub fn main() !void {
+    return cli.run(app, allocator);
 }
