@@ -22,6 +22,15 @@ A simple example can be that when you see an incorrect gitmoji being used, you c
 Grab a binary from the [releases](https://github.com/segersniels/genmoji/releases) page, rename and run it:
 
 ```bash
-$ genmoji --help
-Usage: genmoji [--version] [--help]
+$ genmoji -h
+
+genmoji
+Version: "x.x.x"
+
+USAGE:
+  genmoji [OPTIONS]
+
+OPTIONS:
+      --model <VALUE>   OpenAI model to use (default: "gpt-4-turbo-preview")
+  -h, --help            Prints help information
 ```
