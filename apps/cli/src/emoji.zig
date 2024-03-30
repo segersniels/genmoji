@@ -26,14 +26,6 @@ fn determineCacheFilename(allocator: std.mem.Allocator, directory: []u8) !?[]u8 
     return try std.fmt.allocPrint(allocator, "{s}/gitmoji.json", .{directory});
 }
 
-fn readFile(allocator: std.mem.Allocator, filename: []u8) ![]u8 {
-    const file = try std.fs.openFileAbsolute(filename, .{});
-    defer file.close();
-
-    const stat = try file.stat();
-    return try file.readToEndAlloc(allocator, stat.size);
-}
-
 fn checkIfExists(path: []u8) bool {
     std.fs.accessAbsolute(path, .{}) catch {
         return false;
