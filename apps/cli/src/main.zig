@@ -13,7 +13,7 @@ var config = struct {
 
 var model = cli.Option{
     .long_name = "model",
-    .help = "OpenAI model to use",
+    .help = "OpenAI model to use (default: gpt-4-turbo-preview)",
     .value_ref = cli.mkRef(&config.model),
 };
 
