@@ -17,9 +17,13 @@ You can nudge the model into providing a better suitable gitmoji or message by p
 
 A simple example can be that when you see an incorrect gitmoji being used, you can nudge it in the correct direction by typing an important keyword like `documentation` which will then guide it into using `:memo:` as the correct gitmoji.
 
-### Terminal
+### CLI
 
-Grab a binary from the [releases](https://github.com/segersniels/genmoji/releases) page, rename and run it:
+There is also a CLI version of Genmoji available. It can be used to generate commit messages from your staged changes.
+
+1. Download the latest binary from the [releases](https://github.com/segersniels/genmoji/releases/tag/latest) page for your system
+2. Rename the binary to `genmoji`
+3. Copy the binary to a location in your `$PATH`
 
 ```bash
 $ genmoji -h
