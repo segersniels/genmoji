@@ -8,7 +8,7 @@ var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
 const allocator = arena.allocator();
 
 var config = struct {
-    model: []const u8 = "gpt-4-turbo-preview",
+    model: []const u8 = openai.Model.Default.toString(),
 }{};
 
 var model = cli.Option{
@@ -19,11 +19,6 @@ var model = cli.Option{
 
 fn generate_handler() !void {
     const diff = try git.getStagedChanges(allocator);
-    if (diff.len == 0) {
-        try std.io.getStdOut().writer().print("No changes to commit\n", .{});
-        return;
-    }
-
     const response = try openai.getCompletion(allocator, diff, config.model);
 
     try std.io.getStdOut().writer().print("{s}\n", .{response.choices[0].message.content});
@@ -31,11 +26,6 @@ fn generate_handler() !void {
 
 fn commit_handler() !void {
     const diff = try git.getStagedChanges(allocator);
-    if (diff.len == 0) {
-        try std.io.getStdOut().writer().print("No changes to commit\n", .{});
-        return;
-    }
-
     const response = try openai.getCompletion(allocator, diff, config.model);
     const message = response.choices[0].message.content;
 

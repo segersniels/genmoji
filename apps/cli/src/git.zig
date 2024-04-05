@@ -7,6 +7,11 @@ pub fn getStagedChanges(allocator: std.mem.Allocator) ![]u8 {
         "--cached",
     } });
 
+    if (result.stdout.len == 0) {
+        try std.io.getStdOut().writer().print("No changes to commit\n", .{});
+        std.process.exit(0);
+    }
+
     return result.stdout;
 }
 

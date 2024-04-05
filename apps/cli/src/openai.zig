@@ -20,6 +20,24 @@ const CompletionResponse = struct {
     choices: []Choice,
 };
 
+pub const Model = enum(u2) {
+    Fast,
+    Default,
+
+    /// Returns the string representation of the enum value
+    pub fn toString(self: Model) []const u8 {
+        return switch (self) {
+            .Fast => "gpt-3.5-turbo",
+            .Default => "gpt-4-turbo-preview",
+        };
+    }
+
+    /// Checks whether the provided model is supported
+    pub fn isSupported(model: []const u8) bool {
+        return std.mem.eql(u8, model, Model.Fast.toString()) or std.mem.eql(u8, model, Model.Default.toString());
+    }
+};
+
 const SYSTEM_MESSAGE =
     \\ You are a helpful coding assistant responsible for generating fitting commit messages.
     \\ You will be provided a git diff or code snippet and you are expected to provide a suitable commit message.
@@ -48,6 +66,11 @@ const SYSTEM_MESSAGE =
 ;
 
 pub fn getCompletion(allocator: std.mem.Allocator, prompt: []const u8, model: []const u8) !CompletionResponse {
+    if (!Model.isSupported(model)) {
+        std.debug.print("Unsupported model provided. If you believe the model should be supported, report an issue at https://github.com/segersniels/genmoji/issues.\n", .{});
+        std.process.exit(1);
+    }
+
     var env = try std.process.getEnvMap(allocator);
     defer env.deinit();
 
