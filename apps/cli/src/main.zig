@@ -7,16 +7,6 @@ const cli = @import("zig-cli");
 var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
 const allocator = arena.allocator();
 
-var config = struct {
-    model: []const u8 = openai.Model.Default.toString(),
-}{};
-
-var model = cli.Option{
-    .long_name = "model",
-    .help = "OpenAI model to use (default: gpt-4-turbo-preview)",
-    .value_ref = cli.mkRef(&config.model),
-};
-
 fn generate_handler() !void {
     const diff = try git.getStagedChanges(allocator);
     const response = try openai.getCompletion(allocator, diff, config.model);
@@ -31,6 +21,16 @@ fn commit_handler() !void {
 
     try git.commit(allocator, message);
 }
+
+var config = struct {
+    model: []const u8 = openai.Model.Default.toString(),
+}{};
+
+var model = cli.Option{
+    .long_name = "model",
+    .help = "OpenAI model to use (default: gpt-4-turbo-preview)",
+    .value_ref = cli.mkRef(&config.model),
+};
 
 var generate = cli.Command{
     .name = "generate",
