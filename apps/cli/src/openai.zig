@@ -1,5 +1,6 @@
 const std = @import("std");
 const emoji = @import("emoji.zig");
+const utils = @import("utils.zig");
 
 const Message = struct {
     role: []const u8,
@@ -55,9 +56,6 @@ pub fn getCompletion(allocator: std.mem.Allocator, prompt: []const u8, model: []
         std.process.exit(1);
     };
 
-    var client: std.http.Client = .{ .allocator = allocator };
-    defer client.deinit();
-
     const bearer_token = try std.fmt.allocPrint(allocator, "Bearer {s}", .{api_key});
     const headers = std.http.Client.Request.Headers{ .authorization = std.http.Client.Request.Headers.Value{ .override = bearer_token }, .content_type = std.http.Client.Request.Headers.Value{ .override = "application/json" } };
 
@@ -74,11 +72,13 @@ pub fn getCompletion(allocator: std.mem.Allocator, prompt: []const u8, model: []
     };
     defer messages.deinit();
 
-    const payload = try std.json.stringifyAlloc(allocator, request, .{});
-    var body = std.ArrayList(u8).init(allocator);
-    _ = try client.fetch(.{ .location = .{ .url = "https://api.openai.com/v1/chat/completions" }, .method = .POST, .headers = headers, .response_storage = .{ .dynamic = &body }, .payload = payload });
+    const body = try std.json.stringifyAlloc(allocator, request, .{});
+    const response = try utils.fetch(CompletionResponse, "https://api.openai.com/v1/chat/completions", .{
+        .allocator = allocator,
+        .method = .POST,
+        .body = body,
+        .headers = headers,
+    });
 
-    const data = try std.json.parseFromSlice(CompletionResponse, allocator, body.items, .{ .allocate = .alloc_always, .ignore_unknown_fields = true });
-
-    return data.value;
+    return response;
 }

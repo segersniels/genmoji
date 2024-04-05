@@ -1,4 +1,5 @@
 const std = @import("std");
+const utils = @import("utils.zig");
 
 const CACHE_FILE = ".genmoji/gitmoji.json";
 
@@ -67,9 +68,6 @@ fn writeToCache(allocator: std.mem.Allocator, data: Response) !void {
 }
 
 pub fn fetchGitmojis(allocator: std.mem.Allocator) !Response {
-    var client: std.http.Client = .{ .allocator = allocator };
-    defer client.deinit();
-
     // Check if we have a cached version of the gitmojis
     if (fetchFromCache(allocator)) |cache| {
         // TODO: Figure out a cleaner way to catch the error and only return on actual cache hit
@@ -80,16 +78,15 @@ pub fn fetchGitmojis(allocator: std.mem.Allocator) !Response {
         std.log.debug("Warning: Ignoring error while fetching from cache: {}\n", .{err});
     }
 
-    const headers = std.http.Client.Request.Headers{ .content_type = std.http.Client.Request.Headers.Value{ .override = "application/json" } };
-    var body = std.ArrayList(u8).init(allocator);
-    _ = try client.fetch(.{ .location = .{ .url = "https://gitmoji.dev/api/gitmojis" }, .method = .GET, .headers = headers, .response_storage = .{ .dynamic = &body } });
-
-    const data = try std.json.parseFromSlice(Response, allocator, body.items, .{ .allocate = .alloc_always, .ignore_unknown_fields = true });
+    const response = try utils.fetch(Response, "https://gitmoji.dev/api/gitmojis", .{
+        .allocator = allocator,
+        .method = .GET,
+    });
 
     // Update cache
-    writeToCache(allocator, data.value) catch |err| {
+    writeToCache(allocator, response) catch |err| {
         std.log.debug("Warning: Ignoring error while writing to cache: {}\n", .{err});
     };
 
-    return data.value;
+    return response;
 }
