@@ -34,7 +34,11 @@ Version: "x.x.x"
 USAGE:
   genmoji [OPTIONS]
 
+COMMANDS:
+  generate   Generate a commit message based on the current staged changes
+  commit     Generate a commit message & commit for your staged changes
+
 OPTIONS:
-      --model <VALUE>   OpenAI model to use (default: "gpt-4-turbo-preview")
+      --model <VALUE>   OpenAI model to use (default: gpt-4-turbo-preview)
   -h, --help            Prints help information
 ```
