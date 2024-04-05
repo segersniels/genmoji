@@ -9,3 +9,12 @@ pub fn getStagedChanges(allocator: std.mem.Allocator) ![]u8 {
 
     return result.stdout;
 }
+
+pub fn commit(allocator: std.mem.Allocator, message: []const u8) !void {
+    _ = try std.process.Child.run(.{ .allocator = allocator, .argv = &[_][]const u8{
+        "git",
+        "commit",
+        "-m",
+        message,
+    } });
+}
