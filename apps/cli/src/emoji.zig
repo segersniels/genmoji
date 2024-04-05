@@ -67,26 +67,29 @@ fn writeToCache(allocator: std.mem.Allocator, data: Response) !void {
     try file.writeAll(string.items);
 }
 
-pub fn fetchGitmojis(allocator: std.mem.Allocator) !Response {
-    // Check if we have a cached version of the gitmojis
-    if (fetchFromCache(allocator)) |cache| {
-        // TODO: Figure out a cleaner way to catch the error and only return on actual cache hit
-        if (cache) |value| {
-            return value;
-        }
-    } else |err| {
-        std.log.debug("Warning: Ignoring error while fetching from cache: {}\n", .{err});
-    }
-
+fn fetchFromRemote(allocator: std.mem.Allocator) !Response {
     const response = try utils.fetch(Response, "https://gitmoji.dev/api/gitmojis", .{
         .allocator = allocator,
         .method = .GET,
     });
 
-    // Update cache
     writeToCache(allocator, response) catch |err| {
         std.log.debug("Warning: Ignoring error while writing to cache: {}\n", .{err});
     };
 
     return response;
+}
+
+pub fn fetchGitmojis(allocator: std.mem.Allocator) !Response {
+    const cache = fetchFromCache(allocator) catch |err| {
+        std.log.debug("Warning: Ignoring error while fetching from cache: {}\n", .{err});
+
+        return try fetchFromRemote(allocator);
+    };
+
+    if (cache) |response| {
+        return response;
+    }
+
+    return try fetchFromRemote(allocator);
 }
