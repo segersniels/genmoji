@@ -16,7 +16,5 @@ pub fn fetch(comptime T: type, url: []const u8, options: InitOptions) !T {
     var body = std.ArrayList(u8).init(options.allocator);
     _ = try client.fetch(.{ .location = .{ .url = url }, .method = options.method, .headers = headers, .response_storage = .{ .dynamic = &body }, .payload = options.body });
 
-    const data = try std.json.parseFromSlice(T, options.allocator, body.items, .{ .allocate = .alloc_always, .ignore_unknown_fields = true });
-
-    return data.value;
+    return try std.json.parseFromSliceLeaky(T, options.allocator, body.items, .{ .allocate = .alloc_always, .ignore_unknown_fields = true });
 }

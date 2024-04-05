@@ -47,9 +47,8 @@ fn fetchFromCache(allocator: std.mem.Allocator) !?Response {
 
     const stat = try file.stat();
     const content = try file.readToEndAlloc(allocator, stat.size);
-    const data = try std.json.parseFromSlice(Response, allocator, content, .{ .allocate = .alloc_always, .ignore_unknown_fields = true });
 
-    return data.value;
+    return try std.json.parseFromSliceLeaky(Response, allocator, content, .{ .allocate = .alloc_always, .ignore_unknown_fields = true });
 }
 
 fn writeToCache(allocator: std.mem.Allocator, data: Response) !void {
@@ -61,10 +60,8 @@ fn writeToCache(allocator: std.mem.Allocator, data: Response) !void {
     const file = try std.fs.createFileAbsolute(path, .{ .truncate = true });
     defer file.close();
 
-    var string = std.ArrayList(u8).init(allocator);
-    try std.json.stringify(data, .{}, string.writer());
-
-    try file.writeAll(string.items);
+    const string = try std.json.stringifyAlloc(allocator, data, .{});
+    try file.writeAll(string);
 }
 
 fn fetchFromRemote(allocator: std.mem.Allocator) !Response {
