@@ -26,9 +26,9 @@ jobs:
       - run: npm run lint
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v4
-        working-directory: apps/cli
         with:
           version: v1.54
+          working-directory: apps/cli
 
   build:
     needs: [lint]
