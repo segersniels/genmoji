@@ -12,7 +12,8 @@ import (
 func generateActionFunc(ctx *cli.Context) error {
 	diff, err := getStagedChanges()
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return nil
 	}
 
 	response, err := getCompletion(diff, ctx.String("model"))
