@@ -15,13 +15,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: goto-bus-stop/setup-zig@v2
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
       - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
       - run: npm run lint
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: v1.54
 
   build:
     needs: [lint]
@@ -29,25 +35,23 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
-      - uses: goto-bus-stop/setup-zig@v2
+      - uses: actions/setup-go@v5
         with:
-          version: master
+          go-version: '1.22'
       - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
-      - run: npm run build:ci --workspace cli
+      - run: npm run build --workspace cli
       - name: Get current package version
         id: current_version
-        run: echo "version=$(cat build.zig.zon |grep .version |awk -F' ' '{print $3}' |tr -d '\",')" >> $GITHUB_OUTPUT
+        run: echo "version=$(make version)" >> $GITHUB_OUTPUT
         working-directory: apps/cli
       - uses: mukunku/tag-exists-action@v1.4.0
         id: check_tag
         with:
           tag: '${{ steps.current_version.outputs.version }}'
-      - run: ./scripts/rename.sh
-        working-directory: apps/cli
       - uses: ncipollo/release-action@v1
         if: steps.check_tag.outputs.exists == 'false'
         with:

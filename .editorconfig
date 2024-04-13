@@ -16,3 +16,8 @@ quote_type = single
 # Zig ruleset
 [*.zig]
 indent_size = 4
+
+# Makefile
+[Makefile]
+indent_style = tab
+indent_size = 4

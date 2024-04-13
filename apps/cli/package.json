@@ -1,8 +1,6 @@
 {
   "name": "cli",
   "scripts": {
-    "build": "zig build -Doptimize=ReleaseSafe --summary all",
-    "build:ci": "CI=true npm run build",
-    "lint": "zig fmt --check *.zig src/*.zig"
+    "build": "make build"
   }
 }
