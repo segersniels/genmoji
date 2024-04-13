@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 )
@@ -57,7 +58,12 @@ func writeToCache(path string, response Response) error {
 }
 
 func fetchGitmojis() ([]Gitmoji, error) {
-	var path string = "~/.genmoji/gitmojis.json"
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var path string = dirname + "/.genmoji/gitmojis.json"
 	if isCached(path) {
 		return fetchFromCache(path)
 	}
