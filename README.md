@@ -17,7 +17,7 @@ You can nudge the model into providing a better suitable gitmoji or message by p
 
 A simple example can be that when you see an incorrect gitmoji being used, you can nudge it in the correct direction by typing an important keyword like `documentation` which will then guide it into using `:memo:` as the correct gitmoji.
 
-### CLI
+## CLI
 
 There is also a CLI version of Genmoji available. It can be used to generate commit messages from your staged changes.
 
@@ -27,18 +27,21 @@ There is also a CLI version of Genmoji available. It can be used to generate com
 
 ```bash
 $ genmoji -h
-
-genmoji
-Version: "x.x.x"
+NAME:
+   genmoji - Generate commit messages for your staged changes
 
 USAGE:
-  genmoji [OPTIONS]
+   genmoji [global options] command [command options]
+
+VERSION:
+   x.x.x
 
 COMMANDS:
-  generate   Generate a commit message based on the current staged changes
-  commit     Generate a commit message & commit for your staged changes
+   generate  Generate a commit message
+   commit    Generate a commit message and commit it
+   help, h   Shows a list of commands or help for one command
 
-OPTIONS:
-      --model <VALUE>   OpenAI model to use (default: gpt-4-turbo-preview)
-  -h, --help            Prints help information
+GLOBAL OPTIONS:
+   --help, -h     show help
+   --version, -v  print the version
 ```
