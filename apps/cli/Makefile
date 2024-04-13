@@ -5,7 +5,7 @@ VERSION=0.4.0
 BUILD_DIR=bin
 
 TARGETS=darwin-arm64 darwin-amd64 linux-arm64 linux-amd64
-LDFLAGS="-X main.AppVersion=$(VERSION) -X main.AppName=$(BINARY_NAME)"
+LDFLAGS="-w -s -X main.AppVersion=$(VERSION) -X main.AppName=$(BINARY_NAME)"
 
 build:
 	GOOS=darwin GOARCH=arm64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-darwin-arm64 -ldflags $(LDFLAGS)
