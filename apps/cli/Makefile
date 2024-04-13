@@ -17,7 +17,7 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 run:
-	@go build -o $(BUILD_DIR)/genmoji
+	@go build -o $(BUILD_DIR)/genmoji -ldflags $(LDFLAGS)
 	@./bin/genmoji
 
 version:
