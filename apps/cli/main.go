@@ -44,11 +44,7 @@ func commitActionFunc(ctx *cli.Context) error {
 			IsConfirm: true,
 		}
 
-		result, err := prompt.Run()
-		if err != nil {
-			return err
-		}
-
+		result, _ := prompt.Run()
 		if result == "y" {
 			break
 		}
