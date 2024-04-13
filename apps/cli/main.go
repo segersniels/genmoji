@@ -38,6 +38,7 @@ func commitActionFunc(ctx *cli.Context) error {
 			return err
 		}
 
+		fmt.Println(response)
 		prompt := promptui.Prompt{
 			Label:     "Do you want to commit this message?",
 			IsConfirm: true,
