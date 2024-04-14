@@ -21,7 +21,7 @@ A simple example can be that when you see an incorrect gitmoji being used, you c
 
 There is also a CLI version of Genmoji available. It can be used to generate commit messages from your staged changes.
 
-1. Download the latest binary from the [releases](https://github.com/segersniels/genmoji/releases/tag/latest) page for your system
+1. Download the latest binary from the [releases](https://github.com/segersniels/genmoji/releases/latest) page for your system
 2. Rename the binary to `genmoji`
 3. Copy the binary to a location in your `$PATH`
 
