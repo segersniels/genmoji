@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 type Gitmoji struct {
@@ -43,6 +44,14 @@ func fetchFromCache(path string) ([]Gitmoji, error) {
 }
 
 func writeToCache(path string, response Response) error {
+	directory := filepath.Dir(path)
+	if _, err := os.Stat(directory); os.IsNotExist(err) {
+		err := os.MkdirAll(directory, os.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
+
 	file, err := os.Create(path)
 	if err != nil {
 		return err
@@ -63,7 +72,7 @@ func fetchGitmojis() ([]Gitmoji, error) {
 		log.Fatal(err)
 	}
 
-	var path string = dirname + "/.genmoji/gitmojis.json"
+	path := filepath.Join(dirname, ".genmoji", "gitmojis.json")
 	if isCached(path) {
 		return fetchFromCache(path)
 	}
