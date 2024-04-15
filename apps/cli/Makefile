@@ -1,7 +1,7 @@
 .PHONY: build clean run version
 
 BINARY_NAME=genmoji
-VERSION=0.4.1
+VERSION=0.4.2
 BUILD_DIR=bin
 
 TARGETS=darwin-arm64 darwin-amd64 linux-arm64 linux-amd64
