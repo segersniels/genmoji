@@ -93,7 +93,7 @@ type ConfigData struct {
 	Model string `json:"model"`
 }
 
-var CONFIG = config.New[ConfigData]("genmoji", ConfigData{
+var CONFIG = config.New("genmoji", ConfigData{
 	Model: Default.Value(),
 })
 
