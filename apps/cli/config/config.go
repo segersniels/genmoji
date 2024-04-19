@@ -18,8 +18,7 @@ type Config[T any] struct {
 func prepare[T any](path string, data T) error {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		// Create the path leading up to the file
-		err := os.MkdirAll(filepath.Dir(path), os.ModePerm)
-		if err != nil {
+		if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
 			return err
 		}
 
@@ -31,8 +30,7 @@ func prepare[T any](path string, data T) error {
 		defer file.Close()
 
 		// Write the initial data to the file
-		err = json.NewEncoder(file).Encode(&data)
-		if err != nil {
+		if err := json.NewEncoder(file).Encode(&data); err != nil {
 			return err
 		}
 	}
@@ -49,8 +47,7 @@ func New[T any](name string, initial T) *Config[T] {
 
 	// Prepare the directory and file for persisting the configuration
 	path := filepath.Join(dirname, ".config", name, "config.json")
-	err = prepare(path, initial)
-	if err != nil {
+	if err := prepare(path, initial); err != nil {
 		log.Fatal(err)
 	}
 
@@ -63,8 +60,7 @@ func New[T any](name string, initial T) *Config[T] {
 
 	// Read the configuration and persist in memory
 	var data T
-	err = json.NewDecoder(file).Decode(&data)
-	if err != nil {
+	if err := json.NewDecoder(file).Decode(&data); err != nil {
 		log.Fatal(err)
 	}
 
@@ -94,8 +90,7 @@ func (config *Config[T]) Save() error {
 	file.Truncate(0)
 
 	// Write the configuration to the file
-	err = json.NewEncoder(file).Encode(&config.Data)
-	if err != nil {
+	if err := json.NewEncoder(file).Encode(&config.Data); err != nil {
 		return err
 	}
 
