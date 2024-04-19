@@ -87,7 +87,9 @@ func (config *Config[T]) Save() error {
 	defer file.Close()
 
 	// Clear the file before writing to it
-	file.Truncate(0)
+	if err := file.Truncate(0); err != nil {
+		return err
+	}
 
 	// Write the configuration to the file
 	if err := json.NewEncoder(file).Encode(&config.Data); err != nil {
