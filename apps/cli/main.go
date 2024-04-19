@@ -4,10 +4,14 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"segersniels/genmoji/config"
 
 	"github.com/charmbracelet/huh"
 	"github.com/urfave/cli/v2"
 )
+
+var AppVersion string
+var AppName string
 
 func generateActionFunc(ctx *cli.Context) error {
 	diff, err := getStagedChanges()
@@ -16,7 +20,14 @@ func generateActionFunc(ctx *cli.Context) error {
 		return nil
 	}
 
-	response, err := getCompletion(diff, ctx.String("model"))
+	model := ctx.String("model")
+	if model == "" {
+		model = CONFIG.Data.Model
+	} else if !IsSupported(model) {
+		return fmt.Errorf("unsupported model: %s", model)
+	}
+
+	response, err := getCompletion(diff, model)
 	if err != nil {
 		return err
 	}
@@ -34,7 +45,14 @@ func commitActionFunc(ctx *cli.Context) error {
 
 	var response string
 	for {
-		response, err = getCompletion(diff, ctx.String("model"))
+		model := ctx.String("model")
+		if model == "" {
+			model = CONFIG.Data.Model
+		} else if !IsSupported(model) {
+			return fmt.Errorf("unsupported model: %s", model)
+		}
+
+		response, err = getCompletion(diff, model)
 		if err != nil {
 			return err
 		}
@@ -59,8 +77,28 @@ func commitActionFunc(ctx *cli.Context) error {
 	return nil
 }
 
-var AppVersion string
-var AppName string
+type ConfigData struct {
+	Model string `json:"model"`
+}
+
+var CONFIG = config.New[ConfigData]("genmoji", ConfigData{
+	Model: Default.Value(),
+})
+
+func configActionFunc(ctx *cli.Context) error {
+	form := huh.NewForm(
+		huh.NewGroup(
+			huh.NewSelect[string]().Title("Model").Description("Configure the default model").Options(huh.NewOption(Default.Value(), Default.Value()), huh.NewOption(Fast.Value(), Fast.Value())).Value(&CONFIG.Data.Model),
+		),
+	)
+
+	err := form.Run()
+	if err != nil {
+		return err
+	}
+
+	return CONFIG.Save()
+}
 
 func main() {
 	app := &cli.App{
@@ -73,9 +111,10 @@ func main() {
 				Usage: "Generate a commit message",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
-						Name:  "model",
-						Value: "gpt-4-turbo-preview",
-						Usage: "The model to use for generating the commit message",
+						Name:        "model",
+						Value:       CONFIG.Data.Model,
+						DefaultText: CONFIG.Data.Model,
+						Usage:       "The model to use for generating the commit message",
 					},
 				},
 				Action: generateActionFunc,
@@ -85,12 +124,18 @@ func main() {
 				Usage: "Generate a commit message and commit it",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
-						Name:  "model",
-						Value: "gpt-4-turbo-preview",
-						Usage: "The model to use for generating the commit message",
+						Name:        "model",
+						Value:       CONFIG.Data.Model,
+						DefaultText: CONFIG.Data.Model,
+						Usage:       "The model to use for generating the commit message",
 					},
 				},
 				Action: commitActionFunc,
+			},
+			{
+				Name:   "init",
+				Usage:  "Configure the app",
+				Action: configActionFunc,
 			},
 		},
 	}
