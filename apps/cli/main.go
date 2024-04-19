@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/manifoldco/promptui"
+	"github.com/charmbracelet/huh"
 	"github.com/urfave/cli/v2"
 )
 
@@ -40,13 +40,14 @@ func commitActionFunc(ctx *cli.Context) error {
 		}
 
 		fmt.Println(response)
-		prompt := promptui.Prompt{
-			Label:     "Do you want to commit this message?",
-			IsConfirm: true,
+
+		var confirmation bool
+		err := huh.NewConfirm().Title("Do you want to commit this message?").Value(&confirmation).Run()
+		if err != nil {
+			return nil
 		}
 
-		result, _ := prompt.Run()
-		if result == "y" {
+		if confirmation {
 			break
 		}
 	}
