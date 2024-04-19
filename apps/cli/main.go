@@ -7,6 +7,8 @@ import (
 	"segersniels/genmoji/config"
 
 	"github.com/charmbracelet/huh"
+	"github.com/charmbracelet/huh/spinner"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/urfave/cli/v2"
 )
 
@@ -27,8 +29,13 @@ func generateActionFunc(ctx *cli.Context) error {
 		return fmt.Errorf("unsupported model: %s", model)
 	}
 
-	response, err := getCompletion(diff, model)
-	if err != nil {
+	var response string
+	if err := spinner.New().TitleStyle(lipgloss.NewStyle()).Title("Generating your commit message...").Action(func() {
+		response, err = getCompletion(diff, model)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}).Run(); err != nil {
 		return err
 	}
 
@@ -52,8 +59,12 @@ func commitActionFunc(ctx *cli.Context) error {
 			return fmt.Errorf("unsupported model: %s", model)
 		}
 
-		response, err = getCompletion(diff, model)
-		if err != nil {
+		if err := spinner.New().TitleStyle(lipgloss.NewStyle()).Title("Generating your commit message...").Action(func() {
+			response, err = getCompletion(diff, model)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}).Run(); err != nil {
 			return err
 		}
 
