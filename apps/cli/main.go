@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -144,9 +145,28 @@ func main() {
 				Action: commitActionFunc,
 			},
 			{
-				Name:   "init",
-				Usage:  "Configure the app",
-				Action: configActionFunc,
+				Name:  "config",
+				Usage: "Configure the app",
+				Subcommands: []*cli.Command{
+					{
+						Name:   "init",
+						Usage:  "Initialize the config",
+						Action: configActionFunc,
+					},
+					{
+						Name:  "ls",
+						Usage: "List the current configuration",
+						Action: func(ctx *cli.Context) error {
+							data, err := json.MarshalIndent(CONFIG.Data, "", "  ")
+							if err != nil {
+								return err
+							}
+
+							fmt.Println(string(data))
+							return nil
+						},
+					},
+				},
 			},
 		},
 	}
