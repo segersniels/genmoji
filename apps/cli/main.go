@@ -69,10 +69,8 @@ func commitActionFunc(ctx *cli.Context) error {
 			return err
 		}
 
-		fmt.Println(response)
-
 		var confirmation bool
-		err := huh.NewConfirm().Title("Do you want to commit this message?").Value(&confirmation).Run()
+		err := huh.NewConfirm().Title(response).Description("Do you want to commit this message?").Value(&confirmation).Run()
 		if err != nil {
 			return nil
 		}
