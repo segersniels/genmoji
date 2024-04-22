@@ -39,6 +39,7 @@ VERSION:
 COMMANDS:
    generate  Generate a commit message
    commit    Generate a commit message and commit it
+   config    Configure the app
    help, h   Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
