@@ -1,18 +1,11 @@
 import Link from 'next/link';
-import { FaGithub, FaNpm } from 'react-icons/fa';
+import { FaGithub } from 'react-icons/fa';
 
 const Footer = () => {
   return (
-    <div className="flex fixed bottom-0 w-full justify-end">
-      <Link
-        href="https://www.npmjs.com/package/@segersniels/gitmoji"
-        target="_blank"
-      >
-        <FaNpm className="text-2xl hover:text-gray-700 mb-2 mr-2" />
-      </Link>
-
+    <div className="fixed bottom-0 flex w-full justify-end">
       <Link href="https://github.com/segersniels/genmoji" target="_blank">
-        <FaGithub className="text-2xl hover:text-gray-700 mb-2 mr-2" />
+        <FaGithub className="mb-2 mr-2 text-2xl hover:text-gray-700" />
       </Link>
     </div>
   );
