@@ -14,14 +14,20 @@ export const metadata = {
     title: 'Genmoji',
     description:
       'Generate your gitmoji commit message using AI. Provide a git diff and let Genmoji do the work for you.',
-    images: ['https://genmoji.xyz/og-image.png'],
+    images: [
+      'https://genmoji.xyz/og-image.png',
+      'https://genmoji.dev/og-image.png',
+    ],
   },
   openGraph: {
     title: 'Genmoji',
     description:
       'Generate your gitmoji commit message using AI. Provide a git diff and let Genmoji do the work for you.',
-    images: ['https://genmoji.xyz/og-image.png'],
-    url: 'https://genmoji.xyz',
+    images: [
+      'https://genmoji.xyz/og-image.png',
+      'https://genmoji.dev/og-image.png',
+    ],
+    url: 'https://genmoji.dev',
   },
 };
 

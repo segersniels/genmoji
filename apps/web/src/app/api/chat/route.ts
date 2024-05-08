@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   } = await req.json();
 
   const response = await openai.createChatCompletion({
-    user: 'genmoji.xyz',
+    user: 'genmoji.dev',
     model: 'gpt-3.5-turbo-16k',
     messages: [
       {
