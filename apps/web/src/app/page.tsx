@@ -25,8 +25,8 @@ export default async function Page() {
 
           <div className="flex flex-col items-center space-y-4">
             <p className="leading-tight text-muted-foreground">
-              Grab the CLI tool and generate your gitmoji commit message using
-              AI from the comfort of your terminal.
+              Grab the CLI tool from GitHub below and generate your commit
+              message from the comfort of your terminal.
             </p>
 
             <Link href="https://github.com/segersniels/genmoji" target="_blank">
