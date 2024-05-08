@@ -18,7 +18,7 @@ export default async function Page() {
           <h1 className="text-5xl font-bold tracking-tighter sm:text-5xl">
             Generate your{' '}
             <Link href="https://gitmoji.dev" target="_blank">
-              gitm<p className="inline text-4xl sm:text-5xl">😀</p>ji
+              gitm<p className="inline text-4xl sm:text-4xl">😀</p>ji
             </Link>{' '}
             commit message.
           </h1>
