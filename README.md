@@ -1,10 +1,12 @@
 # genmoji
 
-[Genmoji](https://genmoji.xyz) is a [website](https://genmoji.xyz) that uses the ChatGPT API to generate commit messages from code snippets or `git diff`. With [Genmoji](https://genmoji.xyz), developers can easily create informative and concise commit messages, using the [gitmoji](https://gitmoji.dev) standard, without spending time and effort writing them themselves.
+[Genmoji](https://genmoji.xyz) is a tool and [website](https://genmoji.xyz) that uses the ChatGPT API to generate commit messages from code snippets or `git diff`. With [Genmoji](https://genmoji.xyz), developers can easily create informative and concise commit messages, using the [gitmoji](https://gitmoji.dev) standard, without spending time and effort writing them themselves.
 
 ![img](./apps/cli/demo.gif)
 
 ## Install
+
+You will need an OpenAI API key exported as the environment variable `OPENAI_API_KEY`. You can get one by signing up at [OpenAI](https://platform.openai.com/signup).
 
 ```bash
 # Install in the current directory
