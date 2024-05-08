@@ -13,6 +13,7 @@ import { Separator } from './ui/separator';
 import useLocalStorage from 'hooks/use-local-storage';
 
 interface Props {
+  className?: string;
   gitmojis: {
     list: Gitmoji[];
     choices: string;
@@ -26,7 +27,7 @@ interface Props {
 function parseMessage(
   message: string,
   gitmojis: { emoji: string; code: string }[],
-  style: Style,
+  style: Style
 ) {
   // Force emojis to desired style
   for (const gitmoji of gitmojis) {
@@ -79,9 +80,9 @@ export default function Form(props: Props) {
   }, [generatedMessage, onGenerate]);
 
   return (
-    <div className="py-4">
+    <div className={props.className}>
       <StyleSelect
-        className="absolute top-4 right-4"
+        className="absolute right-4 top-4"
         style={style}
         setStyle={setStyle}
       />
@@ -96,6 +97,7 @@ export default function Form(props: Props) {
            */
           setInput(diff);
         }}
+        className="space-y-4"
       >
         <Textarea
           className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
@@ -107,7 +109,7 @@ export default function Form(props: Props) {
           spellCheck={false}
         />
 
-        <Button className="my-2 w-full" disabled={!diff.length}>
+        <Button className="w-full" disabled={!diff.length}>
           {isLoading ? (
             <AiOutlineLoading className="mx-2 animate-spin stroke-[3rem] font-bold" />
           ) : (
@@ -118,11 +120,11 @@ export default function Form(props: Props) {
 
       {!!generatedMessage && (
         <>
-          <Separator className="my-4 mx-auto w-64" />
+          <Separator className="mx-auto my-4 w-64" />
 
           <div className="relative rounded-md border border-gray-100 p-4 shadow-md hover:bg-gray-50">
             <AiOutlineCopy
-              className="absolute top-2 right-2 cursor-pointer text-slate-400 hover:text-slate-700"
+              className="absolute right-2 top-2 cursor-pointer text-slate-400 hover:text-slate-700"
               onClick={() => {
                 return navigator.clipboard.writeText(generatedMessage);
               }}

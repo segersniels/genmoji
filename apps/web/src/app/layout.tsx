@@ -3,8 +3,6 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 
-import Footer from 'components/footer';
-
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
@@ -35,10 +33,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <main className="mx-auto flex min-h-screen flex-col items-center justify-center bg-muted/50 p-4">
+        <main className="mx-auto flex min-h-screen flex-col items-center justify-center bg-muted/50">
           {children}
-
-          <Footer />
         </main>
 
         <Analytics />
