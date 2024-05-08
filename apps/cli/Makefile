@@ -1,4 +1,4 @@
-.PHONY: build clean run version
+.PHONY: build clean run version demo
 
 BINARY_NAME=genmoji
 VERSION=0.5.1
@@ -24,9 +24,11 @@ linux-amd64:
 clean:
 	rm -rf $(BUILD_DIR)
 
-run:
+dev:
 	@go build -o $(BUILD_DIR)/genmoji -ldflags $(LDFLAGS)
-	@./bin/genmoji
 
 version:
 	@echo $(VERSION)
+
+demo:
+	@vhs demo.tape
