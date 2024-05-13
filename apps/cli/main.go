@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"segersniels/genmoji/config"
 
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/huh/spinner"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/segersniels/config"
 	"github.com/urfave/cli/v2"
 )
 
@@ -91,7 +91,7 @@ type ConfigData struct {
 	Model string `json:"model"`
 }
 
-var CONFIG = config.New("genmoji", ConfigData{
+var CONFIG = config.NewConfig("genmoji", ConfigData{
 	Model: Default.Value(),
 })
 
