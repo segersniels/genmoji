@@ -1,11 +1,12 @@
 package main
 
 import (
-	"bytes"
+	"context"
 	"encoding/json"
-	"fmt"
-	"net/http"
-	"os"
+	"strings"
+	"sync"
+
+	openai "github.com/sashabaranov/go-openai"
 )
 
 const SYSTEM_MESSAGE string = `
@@ -29,62 +30,93 @@ So go look in the descriptions and find the one that best matches the descriptio
 Always start your commit message with a gitmoji followed by the message starting with a capital letter.
 Never mention filenames or function names in the message.
 
+A gitmoji commit message should look like the following: :code: Your message here
+
 Below you can find a list of available gitmojis and their descriptions. Try to look for a fitting emoji and message.
 Use the code representation of the emoji in the commit message.
-
-A gitmoji commit message should look like the following: :code: Your message here
 `
 
-type Model int
+var FILES_TO_IGNORE = []string{
+	"package-lock.json",
+	"yarn.lock",
+	"npm-debug.log",
+	"yarn-debug.log",
+	"yarn-error.log",
+	".pnpm-debug.log",
+	"Cargo.lock",
+	"Gemfile.lock",
+	"mix.lock",
+	"Pipfile.lock",
+	"composer.lock",
+	"go.sum",
+}
 
-const (
-	Fast Model = iota
-	Default
-)
+func splitDiffIntoChunks(diff string) []string {
+	split := strings.Split(diff, "diff --git")[1:]
+	for i, chunk := range split {
+		split[i] = strings.TrimSpace(chunk)
+	}
 
-func (m Model) Value() string {
-	switch m {
-	case Fast:
-		return "gpt-3.5-turbo"
-	case Default:
-		return "gpt-4-turbo-preview"
-	default:
-		return "unknown"
+	return split
+}
+
+func removeLockFiles(chunks []string) []string {
+	var wg sync.WaitGroup
+
+	filtered := make(chan string)
+
+	for _, chunk := range chunks {
+		wg.Add(1)
+
+		go func(chunk string) {
+			defer wg.Done()
+			shouldIgnore := false
+			header := strings.Split(chunk, "\n")[0]
+
+			// Check if the first line contains any of the files to ignore
+			for _, file := range FILES_TO_IGNORE {
+				if strings.Contains(header, file) {
+					shouldIgnore = true
+				}
+			}
+
+			if !shouldIgnore {
+				filtered <- chunk
+			}
+		}(chunk)
+	}
+
+	go func() {
+		wg.Wait()
+		close(filtered)
+	}()
+
+	var result []string
+	for chunk := range filtered {
+		result = append(result, chunk)
+	}
+
+	return result
+}
+
+// Split the diff in chunks and remove any lock files to save on tokens
+func prepareDiff(diff string) string {
+	chunks := splitDiffIntoChunks(diff)
+
+	return strings.Join(removeLockFiles(chunks), "\n")
+}
+
+type OpenAI struct {
+	ApiKey string
+}
+
+func NewOpenAI(apiKey string) *OpenAI {
+	return &OpenAI{
+		ApiKey: apiKey,
 	}
 }
 
-func IsSupported(model string) bool {
-	return model == Fast.Value() || model == Default.Value()
-}
-
-type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
-
-type ChatCompletionRequest struct {
-	Model    string    `json:"model"`
-	Messages []Message `json:"messages"`
-}
-
-type Choice struct {
-	Message Message `json:"message"`
-}
-
-type ChatCompletionResponse struct {
-	Choices []Choice `json:"choices"`
-}
-
-func getCompletion(prompt string, model string) (string, error) {
-	if !IsSupported(model) {
-		return "", fmt.Errorf("unsupported model: %s", model)
-	}
-
-	apiKey := os.Getenv("OPENAI_API_KEY")
-	if apiKey == "" {
-		return "", fmt.Errorf("OPENAI_API_KEY is not set")
-	}
-
+func (o *OpenAI) GetChatCompletion(diff string) (string, error) {
 	gitmojis, err := fetchGitmojis()
 	if err != nil {
 		return "", err
@@ -95,40 +127,27 @@ func getCompletion(prompt string, model string) (string, error) {
 		return "", err
 	}
 
-	var systemMessage string = SYSTEM_MESSAGE + string(list)
-	body := ChatCompletionRequest{
-		Model: model,
-		Messages: []Message{
-			{Role: "system", Content: systemMessage},
-			{Role: "user", Content: prompt},
+	client := openai.NewClient(o.ApiKey)
+	resp, err := client.CreateChatCompletion(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model: CONFIG.Data.Model,
+			Messages: []openai.ChatCompletionMessage{
+				{
+					Role:    openai.ChatMessageRoleSystem,
+					Content: SYSTEM_MESSAGE + string(list),
+				},
+				{
+					Role:    openai.ChatMessageRoleUser,
+					Content: prepareDiff(diff),
+				},
+			},
 		},
-	}
+	)
 
-	data, err := json.Marshal(body)
 	if err != nil {
 		return "", err
 	}
 
-	req, err := http.NewRequest("POST", "https://api.openai.com/v1/chat/completions", bytes.NewBuffer(data))
-	if err != nil {
-		return "", err
-	}
-
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", "Bearer "+apiKey)
-
-	client := &http.Client{}
-	res, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-
-	defer res.Body.Close()
-
-	var response ChatCompletionResponse
-	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
-		return "", err
-	}
-
-	return response.Choices[0].Message.Content, nil
+	return resp.Choices[0].Message.Content, nil
 }
