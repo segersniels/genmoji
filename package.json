@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev": "npm run dev --workspace web",
     "build": "turbo build",
     "build:ci": "turbo build:ci",
     "lint": "turbo lint",
