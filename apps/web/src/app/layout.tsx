@@ -3,12 +3,14 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { getDescription, getTitle } from 'helpers/seo';
+import { Metadata } from 'next';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: getTitle(),
   description: getDescription(),
+  metadataBase: new URL(`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`),
   twitter: {
     card: 'summary_large_image',
     title: getTitle(),
