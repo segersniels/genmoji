@@ -1,5 +1,5 @@
 import { OpenAIStream, StreamingTextResponse } from 'ai';
-import { generateSystemMessage, prepareDiff } from 'helpers/Generate';
+import { generateSystemMessage, prepareDiff } from 'helpers/generate';
 import {
   Configuration,
   OpenAIApi,
