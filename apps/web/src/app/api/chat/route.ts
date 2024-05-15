@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 
   const response = await openai.createChatCompletion({
     user: 'genmoji.dev',
-    model: 'gpt-3.5-turbo-16k',
+    model: 'gpt-3.5-turbo',
     messages: [
       {
         role: 'system',
