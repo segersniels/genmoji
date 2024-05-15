@@ -27,7 +27,7 @@ function removeExcessiveLinesFromChunk(diff: string) {
  * Prepare a diff for use in the prompt by removing stuff like
  * the lockfile changes and removing some of the whitespace.
  */
-function prepareDiff(diff: string, minify = false) {
+export function prepareDiff(diff: string, minify = false) {
   if (!minify) {
     return diff;
   }

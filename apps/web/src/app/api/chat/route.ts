@@ -1,5 +1,5 @@
 import { OpenAIStream, StreamingTextResponse } from 'ai';
-import { generateSystemMessage } from 'helpers/Generate';
+import { generateSystemMessage, prepareDiff } from 'helpers/Generate';
 import {
   Configuration,
   OpenAIApi,
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       },
       {
         role: 'user',
-        content: diff,
+        content: prepareDiff(diff),
       },
     ],
     temperature: 0.7,
