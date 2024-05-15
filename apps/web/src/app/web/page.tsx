@@ -6,7 +6,7 @@ export default async function Web() {
   const gitmojis = await getGitmojis();
 
   return (
-    <div className="flex w-full flex-col items-center justify-center space-y-8 sm:w-[25vw]">
+    <div className="flex w-full flex-col items-center justify-center space-y-8 px-4 sm:w-[25vw] sm:px-0">
       <h1 className="break-words text-center text-6xl font-bold tracking-tighter">
         Generate your{' '}
         <Link href="https://gitmoji.dev" target="_blank">
