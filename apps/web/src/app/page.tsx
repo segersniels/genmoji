@@ -22,7 +22,9 @@ export default function Page() {
       </div>
 
       <div className="flex flex-col justify-center space-x-4">
-        <Button className="bg-[#ffdd67] text-black">Download</Button>
+        <Button className="bg-[#ffdd67] text-black hover:bg-[#ffdd67] hover:bg-opacity-75">
+          Download
+        </Button>
         <Button variant="link" asChild>
           <Link href="/web" className="text-xs">
             Or try it out here <FaArrowRight className="ml-1 inline h-2 w-2" />
