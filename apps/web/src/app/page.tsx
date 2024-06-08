@@ -22,10 +22,7 @@ export default function Page() {
       </div>
 
       <div className="flex flex-col justify-center">
-        <Button
-          className="bg-[#ffdd67] text-black hover:bg-[#ffdd67] hover:bg-opacity-75"
-          asChild
-        >
+        <Button asChild>
           <a href="https://github.com/segersniels/genmoji">Download</a>
         </Button>
 
