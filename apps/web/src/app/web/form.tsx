@@ -122,7 +122,7 @@ export default function Client(props: Props) {
         <>
           <Separator className="mx-auto my-4 w-64" />
 
-          <div className="relative rounded-md border border-gray-100 p-4 shadow-md hover:bg-gray-50">
+          <div className="relative flex items-center justify-center rounded-md border p-4 shadow-sm">
             <AiOutlineCopy
               className="absolute right-2 top-2 cursor-pointer text-slate-400 hover:text-slate-700"
               onClick={() => {
@@ -130,9 +130,7 @@ export default function Client(props: Props) {
               }}
             />
 
-            <div className="prose text-center font-mono text-pink-400">
-              <p>{generatedMessage}</p>
-            </div>
+            <p className="prose font-mono">{generatedMessage}</p>
           </div>
         </>
       )}
