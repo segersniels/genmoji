@@ -6,7 +6,7 @@
 
 ## Install
 
-You will need an OpenAI API key exported as the environment variable `OPENAI_API_KEY`. You can get one by signing up at [OpenAI](https://platform.openai.com/signup).
+Bring your own API key. You will need either an OpenAI or Anthropic API key exported as the environment variables `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`.
 
 ```bash
 # Install in the current directory
