@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import Image from 'next/image';
-import Demo from '../../../cli/demo.gif';
+import Demo from '../../../../demo.gif';
 import { FaArrowRight } from 'react-icons/fa';
 import { Button } from 'components/ui/button';
 
