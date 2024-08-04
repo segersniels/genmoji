@@ -31,4 +31,4 @@ version:
 	@echo $(VERSION)
 
 demo:
-	@vhs demo.tape
+	@vhs ../../demo.tape -o ../../demo.gif
