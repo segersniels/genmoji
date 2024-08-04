@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 
@@ -27,14 +28,14 @@ func NewGenmoji() *Genmoji {
 			log.Fatal("ANTHROPIC_API_KEY is not set")
 		}
 
-		client = NewAnthropic(apiKey)
+		client = NewAnthropic(apiKey, CONFIG.Data.Model)
 	default:
 		apiKey = os.Getenv("OPENAI_API_KEY")
 		if apiKey == "" {
 			log.Fatal("OPENAI_API_KEY is not set")
 		}
 
-		client = NewOpenAI(apiKey)
+		client = NewOpenAI(apiKey, CONFIG.Data.Model)
 	}
 
 	return &Genmoji{
@@ -48,9 +49,19 @@ func (g *Genmoji) Generate() (string, error) {
 		return "", err
 	}
 
+	gitmojis, err := fetchGitmojis()
+	if err != nil {
+		return "", err
+	}
+
+	list, err := json.Marshal(gitmojis)
+	if err != nil {
+		return "", err
+	}
+
 	var response string
 	err = spinner.New().TitleStyle(lipgloss.NewStyle()).Title("Generating your commit message...").Action(func() {
-		response, err = g.client.CreateMessage(diff)
+		response, err = g.client.CreateMessage(diff, list)
 	}).Run()
 
 	if err != nil {
@@ -66,10 +77,20 @@ func (g *Genmoji) Commit() error {
 		return err
 	}
 
+	gitmojis, err := fetchGitmojis()
+	if err != nil {
+		return err
+	}
+
+	list, err := json.Marshal(gitmojis)
+	if err != nil {
+		return err
+	}
+
 	var response string
 	for {
 		if err := spinner.New().TitleStyle(lipgloss.NewStyle()).Title("Generating your commit message...").Action(func() {
-			response, err = g.client.CreateMessage(diff)
+			response, err = g.client.CreateMessage(diff, list)
 			if err != nil {
 				log.Fatal(err)
 			}

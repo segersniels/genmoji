@@ -17,42 +17,34 @@ const (
 )
 
 type MessageClient interface {
-	CreateMessage(diff string) (string, error)
+	CreateMessage(diff string, gitmojis []byte) (string, error)
 }
 
 // Ensure OpenAI satisfies the MessageClient interface
 var _ MessageClient = (*OpenAI)(nil)
 
 type OpenAI struct {
-	ApiKey string
+	apiKey string
+	model  string
 }
 
-func NewOpenAI(apiKey string) *OpenAI {
+func NewOpenAI(apiKey string, model string) *OpenAI {
 	return &OpenAI{
-		ApiKey: apiKey,
+		apiKey,
+		model,
 	}
 }
 
-func (o *OpenAI) CreateMessage(diff string) (string, error) {
-	gitmojis, err := fetchGitmojis()
-	if err != nil {
-		return "", err
-	}
-
-	list, err := json.Marshal(gitmojis)
-	if err != nil {
-		return "", err
-	}
-
-	client := openai.NewClient(o.ApiKey)
+func (o *OpenAI) CreateMessage(diff string, gitmojis []byte) (string, error) {
+	client := openai.NewClient(o.apiKey)
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: CONFIG.Data.Model,
+			Model: o.model,
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    MessageRoleSystem,
-					Content: SYSTEM_MESSAGE + string(list),
+					Content: SYSTEM_MESSAGE + string(gitmojis),
 				},
 				{
 					Role:    MessageRoleUser,
@@ -103,30 +95,22 @@ type ClaudeMessagesResponse struct {
 var _ MessageClient = (*Anthropic)(nil)
 
 type Anthropic struct {
-	ApiKey string
+	apiKey string
+	model  string
 }
 
-func NewAnthropic(apiKey string) *Anthropic {
+func NewAnthropic(apiKey, model string) *Anthropic {
 	return &Anthropic{
-		ApiKey: apiKey,
+		apiKey,
+		model,
 	}
 }
 
-func (a *Anthropic) CreateMessage(diff string) (string, error) {
-	gitmojis, err := fetchGitmojis()
-	if err != nil {
-		return "", err
-	}
-
-	list, err := json.Marshal(gitmojis)
-	if err != nil {
-		return "", err
-	}
-
+func (a *Anthropic) CreateMessage(diff string, gitmojis []byte) (string, error) {
 	body, err := json.Marshal(map[string]interface{}{
-		"model":      Claude3Dot5Sonnet,
+		"model":      a.model,
 		"max_tokens": 4096,
-		"system":     SYSTEM_MESSAGE + string(list),
+		"system":     SYSTEM_MESSAGE + string(gitmojis),
 		"messages": []ClaudeMessage{
 			{
 				Role:    MessageRoleUser,
@@ -145,7 +129,7 @@ func (a *Anthropic) CreateMessage(diff string) (string, error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("x-api-key", a.ApiKey)
+	req.Header.Set("x-api-key", a.apiKey)
 	req.Header.Set("anthropic-version", "2023-06-01")
 
 	resp, err := http.DefaultClient.Do(req)
