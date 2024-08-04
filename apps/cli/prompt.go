@@ -1,12 +1,10 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
+	"errors"
+	"os/exec"
 	"strings"
 	"sync"
-
-	openai "github.com/sashabaranov/go-openai"
 )
 
 const SYSTEM_MESSAGE string = `
@@ -106,48 +104,22 @@ func prepareDiff(diff string) string {
 	return strings.Join(removeLockFiles(chunks), "\n")
 }
 
-type OpenAI struct {
-	ApiKey string
+func getStagedChanges() (string, error) {
+	cmd := exec.Command("git", "diff", "--cached")
+	stdout, err := cmd.Output()
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(stdout) == 0 {
+		return "", errors.New("no staged changes found")
+	}
+
+	return string(stdout), nil
 }
 
-func NewOpenAI(apiKey string) *OpenAI {
-	return &OpenAI{
-		ApiKey: apiKey,
-	}
-}
-
-func (o *OpenAI) GetChatCompletion(diff string) (string, error) {
-	gitmojis, err := fetchGitmojis()
-	if err != nil {
-		return "", err
-	}
-
-	list, err := json.Marshal(gitmojis)
-	if err != nil {
-		return "", err
-	}
-
-	client := openai.NewClient(o.ApiKey)
-	resp, err := client.CreateChatCompletion(
-		context.Background(),
-		openai.ChatCompletionRequest{
-			Model: CONFIG.Data.Model,
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleSystem,
-					Content: SYSTEM_MESSAGE + string(list),
-				},
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: prepareDiff(diff),
-				},
-			},
-		},
-	)
-
-	if err != nil {
-		return "", err
-	}
-
-	return resp.Choices[0].Message.Content, nil
+func commit(message string) error {
+	cmd := exec.Command("git", "commit", "-m", message)
+	return cmd.Run()
 }

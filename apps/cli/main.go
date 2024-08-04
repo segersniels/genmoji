@@ -7,9 +7,16 @@ import (
 	"os"
 
 	"github.com/charmbracelet/huh"
-	"github.com/sashabaranov/go-openai"
 	"github.com/segersniels/config"
 	"github.com/urfave/cli/v2"
+)
+
+const (
+	GPT4o             = "gpt-4o"
+	GPT4oMini         = "gpt-4o-mini"
+	GPT4Turbo         = "gpt-4-turbo"
+	GPT3Dot5Turbo     = "gpt-3.5-turbo"
+	Claude3Dot5Sonnet = "claude-3-5-sonnet-20240620"
 )
 
 var AppVersion string
@@ -20,7 +27,7 @@ type ConfigData struct {
 }
 
 var CONFIG = config.NewConfig("genmoji", ConfigData{
-	Model: openai.GPT4o,
+	Model: GPT4oMini,
 })
 
 func main() {
@@ -59,7 +66,7 @@ func main() {
 						Name:  "init",
 						Usage: "Initialize the config",
 						Action: func(ctx *cli.Context) error {
-							models := huh.NewOptions(openai.GPT4o, openai.GPT4Turbo, openai.GPT3Dot5Turbo)
+							models := huh.NewOptions(GPT4o, GPT4oMini, GPT4Turbo, GPT3Dot5Turbo, Claude3Dot5Sonnet)
 							form := huh.NewForm(
 								huh.NewGroup(
 									huh.NewSelect[string]().Title("Model").Description("Configure the default model").Options(models...).Value(&CONFIG.Data.Model),

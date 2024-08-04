@@ -10,17 +10,35 @@ import (
 )
 
 type Genmoji struct {
-	client OpenAI
+	client MessageClient
 }
 
 func NewGenmoji() *Genmoji {
-	apiKey := os.Getenv("OPENAI_API_KEY")
-	if apiKey == "" {
-		log.Fatal("OPENAI_API is not set")
+	var (
+		client MessageClient
+		apiKey string
+	)
+
+	// Depending on the user selected model, we need to set the corresponding API key
+	switch CONFIG.Data.Model {
+	case Claude3Dot5Sonnet:
+		apiKey = os.Getenv("ANTHROPIC_API_KEY")
+		if apiKey == "" {
+			log.Fatal("ANTHROPIC_API_KEY is not set")
+		}
+
+		client = NewAnthropic(apiKey)
+	default:
+		apiKey = os.Getenv("OPENAI_API_KEY")
+		if apiKey == "" {
+			log.Fatal("OPENAI_API_KEY is not set")
+		}
+
+		client = NewOpenAI(apiKey)
 	}
 
 	return &Genmoji{
-		client: *NewOpenAI(apiKey),
+		client,
 	}
 }
 
@@ -31,12 +49,11 @@ func (g *Genmoji) Generate() (string, error) {
 	}
 
 	var response string
-	if err := spinner.New().TitleStyle(lipgloss.NewStyle()).Title("Generating your commit message...").Action(func() {
-		response, err = g.client.GetChatCompletion(diff)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}).Run(); err != nil {
+	err = spinner.New().TitleStyle(lipgloss.NewStyle()).Title("Generating your commit message...").Action(func() {
+		response, err = g.client.CreateMessage(diff)
+	}).Run()
+
+	if err != nil {
 		return "", err
 	}
 
@@ -52,7 +69,7 @@ func (g *Genmoji) Commit() error {
 	var response string
 	for {
 		if err := spinner.New().TitleStyle(lipgloss.NewStyle()).Title("Generating your commit message...").Action(func() {
-			response, err = g.client.GetChatCompletion(diff)
+			response, err = g.client.CreateMessage(diff)
 			if err != nil {
 				log.Fatal(err)
 			}
