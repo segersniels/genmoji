@@ -1,3 +1,6 @@
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
 /favicon.ico
   Cache-Control: public, max-age=3600, s-maxage=3600
 /assets/*
