@@ -1,6 +1,11 @@
 import { Button, buttonVariants } from 'components/ui/button';
 import { ArrowLeft, Clipboard } from 'lucide-react';
-import { ActionFunctionArgs, json } from '@remix-run/cloudflare';
+import {
+  ActionFunctionArgs,
+  MetaArgs,
+  MetaFunction,
+  json,
+} from '@remix-run/cloudflare';
 import { getGitmojis } from '.server/gitmoji';
 import {
   useLoaderData,
@@ -16,7 +21,7 @@ import { createChatCompletion, generateSystemMessage } from '.server/ai';
 import useEnterSubmit from 'hooks/use-enter-submit';
 import StyleSelect from 'components/style-select';
 import { Textarea } from 'components/ui/textarea';
-import { cn } from 'lib/utils';
+import { cn, extendMeta } from 'lib/utils';
 
 /**
  * Do some additional post processing on the received answer
@@ -73,6 +78,16 @@ export async function loader() {
   return {
     gitmojis,
   };
+}
+
+export function meta({ matches }: MetaArgs) {
+  const title = 'Try it out | Genmoji';
+
+  return extendMeta(matches, [
+    { title },
+    { name: 'og:title', content: title },
+    { name: 'twitter:title', content: title },
+  ]);
 }
 
 export default function Web() {

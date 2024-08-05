@@ -15,7 +15,7 @@ export const meta: MetaFunction = ({ error }) => {
     return [{ title: 'Oops, something went wrong!' }];
   }
 
-  const title = 'Generate gitmoji commit messages using AI | Genmoji.dev';
+  const title = 'Genmoji';
   const description =
     'Generate your gitmoji commit message using AI. Provide a git diff and let Genmoji do the work for you.';
 
