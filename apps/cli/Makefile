@@ -22,4 +22,4 @@ version:
 	@echo $(VERSION)
 
 demo:
-	@vhs ../../demo.tape -o ../../demo.gif
+	@vhs ../../demo.tape -o ../web/public/demo.gif
