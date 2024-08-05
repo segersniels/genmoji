@@ -24,7 +24,7 @@ export default function Index() {
           to="https://github.com/segersniels/genmoji"
           className={cn(
             buttonVariants(),
-            'hover:shadow-[5px_5px_0px_0px_rgba(109,40,217)] transition-shadow duration-100 shadow-[3px_3px_0px_0px_rgba(109,40,217)]',
+            'hover:shadow-[5px_5px_0px_0px_rgba(109,40,217)] transition-shadow duration-100',
           )}
           target="_blank"
           rel="noreferrer"
