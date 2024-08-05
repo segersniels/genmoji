@@ -1,11 +1,6 @@
 import { Button, buttonVariants } from 'components/ui/button';
 import { ArrowLeft, Clipboard } from 'lucide-react';
-import {
-  ActionFunctionArgs,
-  MetaArgs,
-  MetaFunction,
-  json,
-} from '@remix-run/cloudflare';
+import { ActionFunctionArgs, MetaArgs, json } from '@remix-run/cloudflare';
 import { getGitmojis } from '.server/gitmoji';
 import {
   useLoaderData,
