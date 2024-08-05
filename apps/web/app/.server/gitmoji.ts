@@ -1,5 +1,3 @@
-'use server';
-
 import Gitmoji from 'types/Gitmoji';
 import BackupList from 'resources/gitmojis.json';
 
