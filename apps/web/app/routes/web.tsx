@@ -116,7 +116,7 @@ export default function Web() {
   );
 
   return (
-    <div className="flex w-full flex-col items-center justify-center space-y-8 px-4 sm:px-0">
+    <div className="flex w-full flex-col items-center justify-center space-y-4 px-4 sm:px-0">
       <StyleSelect
         className="absolute right-4 top-4"
         style={style}
@@ -167,7 +167,7 @@ export default function Web() {
       </Form>
 
       {!!generatedMessage && (
-        <div className="relative flex items-center justify-center rounded-md border p-4 shadow-sm">
+        <div className="w-full relative flex items-center justify-center rounded-md border shadow-sm bg-muted">
           <Clipboard
             className="absolute right-2 top-2 h-4 w-4 cursor-pointer text-slate-400 hover:text-slate-700"
             onClick={() => {
@@ -175,7 +175,7 @@ export default function Web() {
             }}
           />
 
-          <p className="prose font-mono">{generatedMessage}</p>
+          <p className="font-mono p-8 text-center">{generatedMessage}</p>
         </div>
       )}
     </div>
