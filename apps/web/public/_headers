@@ -1,6 +1,8 @@
 https://:project.pages.dev/*
   X-Robots-Tag: noindex
 
+/demo.gif
+  Cache-Control: public, max-age=2592000, s-maxage=2592000
 /favicon.ico
   Cache-Control: public, max-age=3600, s-maxage=3600
 /assets/*
