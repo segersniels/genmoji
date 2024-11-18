@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"os/exec"
 	"strings"
 	"sync"
@@ -121,5 +122,10 @@ func getStagedChanges() (string, error) {
 
 func commit(message string) error {
 	cmd := exec.Command("git", "commit", "-m", message)
-	return cmd.Run()
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("error committing: %s", string(output))
+	}
+
+	return nil
 }
