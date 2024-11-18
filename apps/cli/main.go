@@ -8,7 +8,13 @@ import (
 
 	"github.com/charmbracelet/huh"
 	"github.com/segersniels/config"
+	updater "github.com/segersniels/updater"
 	"github.com/urfave/cli/v2"
+)
+
+var (
+	AppVersion string
+	AppName    string
 )
 
 type Model string
@@ -26,16 +32,16 @@ type ConfigData struct {
 	Model Model `json:"model"`
 }
 
-var (
-	AppVersion string
-	AppName    string
-	CONFIG     = config.NewConfig("genmoji", ConfigData{
-		Model: GPT4oMini,
-	})
-)
+var CONFIG = config.NewConfig("genmoji", ConfigData{
+	Model: GPT4oMini,
+})
 
 func main() {
-	genmoji := NewGenmoji()
+	upd := updater.NewUpdater(AppName, AppVersion, "segersniels")
+	version := upd.IsNewVersionAvailable()
+	if version != nil {
+		fmt.Printf("A new version of %s is available (%s).\n\n", AppName, version.String())
+	}
 
 	app := &cli.App{
 		Name:    AppName,
@@ -46,6 +52,7 @@ func main() {
 				Name:  "generate",
 				Usage: "Generate a commit message",
 				Action: func(ctx *cli.Context) error {
+					genmoji := NewGenmoji()
 					response, err := genmoji.Generate()
 					if err != nil {
 						return err
@@ -59,6 +66,7 @@ func main() {
 				Name:  "commit",
 				Usage: "Generate a commit message and commit it",
 				Action: func(ctx *cli.Context) error {
+					genmoji := NewGenmoji()
 					return genmoji.Commit()
 				},
 			},

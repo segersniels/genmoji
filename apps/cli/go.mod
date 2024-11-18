@@ -1,6 +1,8 @@
-module segersniels/genmoji
+module github.com/segersniels/genmoji
 
-go 1.22.2
+go 1.22.5
+
+toolchain go1.23.2
 
 require (
 	github.com/atotto/clipboard v0.1.4 // indirect
@@ -15,6 +17,7 @@ require (
 	github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
+	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
@@ -27,6 +30,7 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sashabaranov/go-openai v1.24.0 // indirect
 	github.com/segersniels/config v0.0.0-20240503115636-403023c44d9f // indirect
+	github.com/segersniels/updater v1.2.1 // indirect
 	github.com/urfave/cli/v2 v2.27.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
