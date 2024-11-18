@@ -15,6 +15,11 @@ curl -sSL https://raw.githubusercontent.com/segersniels/genmoji/master/scripts/i
 curl -sSL https://raw.githubusercontent.com/segersniels/genmoji/master/scripts/install.sh | sudo bash -s /usr/local/bin
 ```
 
+### Update
+
+When an update is available, you will see a message in your terminal notifying you that a new version is available.
+To update, run above install script again and you're good to go.
+
 ### Manual
 
 1. Download the latest binary from the [releases](https://github.com/segersniels/genmoji/releases/latest) page for your system
