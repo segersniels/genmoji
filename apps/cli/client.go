@@ -25,10 +25,10 @@ var _ MessageClient = (*OpenAI)(nil)
 
 type OpenAI struct {
 	apiKey string
-	model  string
+	model  Model
 }
 
-func NewOpenAI(apiKey string, model string) *OpenAI {
+func NewOpenAI(apiKey string, model Model) *OpenAI {
 	return &OpenAI{
 		apiKey,
 		model,
@@ -40,7 +40,7 @@ func (o *OpenAI) CreateMessage(diff string, gitmojis []byte) (string, error) {
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: o.model,
+			Model: string(o.model),
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    MessageRoleSystem,
@@ -96,10 +96,10 @@ var _ MessageClient = (*Anthropic)(nil)
 
 type Anthropic struct {
 	apiKey string
-	model  string
+	model  Model
 }
 
-func NewAnthropic(apiKey, model string) *Anthropic {
+func NewAnthropic(apiKey string, model Model) *Anthropic {
 	return &Anthropic{
 		apiKey,
 		model,
@@ -107,8 +107,12 @@ func NewAnthropic(apiKey, model string) *Anthropic {
 }
 
 func (a *Anthropic) CreateMessage(diff string, gitmojis []byte) (string, error) {
+	if a.model == _Claude3Dot5Sonnet {
+		a.model = Claude3Dot5Sonnet
+	}
+
 	body, err := json.Marshal(map[string]interface{}{
-		"model":      a.model,
+		"model":      string(a.model),
 		"max_tokens": 4096,
 		"system":     SYSTEM_MESSAGE + string(gitmojis),
 		"messages": []ClaudeMessage{

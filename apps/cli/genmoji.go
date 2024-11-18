@@ -60,11 +60,12 @@ func (g *Genmoji) Generate() (string, error) {
 	}
 
 	var response string
-	err = spinner.New().TitleStyle(lipgloss.NewStyle()).Title("Generating your commit message...").Action(func() {
+	if err := spinner.New().TitleStyle(lipgloss.NewStyle()).Title("Generating your commit message...").Action(func() {
 		response, err = g.client.CreateMessage(diff, list)
-	}).Run()
-
-	if err != nil {
+		if err != nil {
+			log.Fatal(err)
+		}
+	}).Run(); err != nil {
 		return "", err
 	}
 
@@ -72,34 +73,16 @@ func (g *Genmoji) Generate() (string, error) {
 }
 
 func (g *Genmoji) Commit() error {
-	diff, err := getStagedChanges()
-	if err != nil {
-		return err
-	}
-
-	gitmojis, err := fetchGitmojis()
-	if err != nil {
-		return err
-	}
-
-	list, err := json.Marshal(gitmojis)
-	if err != nil {
-		return err
-	}
-
 	var response string
+	var err error
 	for {
-		if err := spinner.New().TitleStyle(lipgloss.NewStyle()).Title("Generating your commit message...").Action(func() {
-			response, err = g.client.CreateMessage(diff, list)
-			if err != nil {
-				log.Fatal(err)
-			}
-		}).Run(); err != nil {
+		response, err = g.Generate()
+		if err != nil {
 			return err
 		}
 
 		var confirmation bool
-		err := huh.NewConfirm().Title(response).Description("Do you want to commit this message?").Value(&confirmation).Run()
+		err = huh.NewConfirm().Title(response).Description("Do you want to commit this message?").Value(&confirmation).Run()
 		if err != nil {
 			return err
 		}
