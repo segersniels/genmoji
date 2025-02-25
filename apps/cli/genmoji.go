@@ -22,7 +22,9 @@ func NewGenmoji() *Genmoji {
 
 	// Depending on the user selected model, we need to set the corresponding API key
 	switch CONFIG.Data.Model {
+	case Claude3Dot7Sonnet:
 	case Claude3Dot5Sonnet:
+	case Claude3Dot5Haiku:
 		apiKey = os.Getenv("ANTHROPIC_API_KEY")
 		if apiKey == "" {
 			log.Fatal("ANTHROPIC_API_KEY is not set")

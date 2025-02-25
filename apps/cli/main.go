@@ -20,12 +20,11 @@ var (
 type Model string
 
 const (
-	GPT4o              Model = "gpt-4o"
-	GPT4oMini          Model = "gpt-4o-mini"
-	GPT4Turbo          Model = "gpt-4-turbo"
-	GPT3Dot5Turbo      Model = "gpt-3.5-turbo"
-	Claude3Dot5Sonnet  Model = "claude-3-5-sonnet-latest"
-	_Claude3Dot5Sonnet Model = "claude-3-5-sonnet-20240620"
+	GPT4o             Model = "gpt-4o"
+	GPT4oMini         Model = "gpt-4o-mini"
+	Claude3Dot7Sonnet Model = "claude-3-7-sonnet-latest"
+	Claude3Dot5Sonnet Model = "claude-3-5-sonnet-latest"
+	Claude3Dot5Haiku  Model = "claude-3-5-haiku-latest"
 )
 
 type ConfigData struct {
@@ -78,7 +77,7 @@ func main() {
 						Name:  "init",
 						Usage: "Initialize the config",
 						Action: func(ctx *cli.Context) error {
-							models := huh.NewOptions(GPT4o, GPT4oMini, GPT4Turbo, GPT3Dot5Turbo, Claude3Dot5Sonnet)
+							models := huh.NewOptions(GPT4o, GPT4oMini, Claude3Dot7Sonnet, Claude3Dot5Sonnet, Claude3Dot5Haiku)
 							form := huh.NewForm(
 								huh.NewGroup(
 									huh.NewSelect[Model]().Title("Model").Description("Configure the default model").Options(models...).Value(&CONFIG.Data.Model),

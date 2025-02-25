@@ -107,10 +107,6 @@ func NewAnthropic(apiKey string, model Model) *Anthropic {
 }
 
 func (a *Anthropic) CreateMessage(diff string, gitmojis []byte) (string, error) {
-	if a.model == _Claude3Dot5Sonnet {
-		a.model = Claude3Dot5Sonnet
-	}
-
 	body, err := json.Marshal(map[string]interface{}{
 		"model":      string(a.model),
 		"max_tokens": 4096,
