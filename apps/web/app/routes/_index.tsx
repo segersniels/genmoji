@@ -1,7 +1,6 @@
 import { Link } from '@remix-run/react';
 import { buttonVariants } from 'components/ui/button';
 import { cn } from 'lib/utils';
-import { ArrowRight } from 'lucide-react';
 
 export default function Index() {
   return (
@@ -30,14 +29,6 @@ export default function Index() {
           rel="noreferrer"
         >
           Download
-        </Link>
-
-        <Link
-          to="/web"
-          className={cn(buttonVariants({ variant: 'link' }), 'text-xs')}
-          prefetch="render"
-        >
-          Or try it out here <ArrowRight className="ml-1 inline h-2 w-2" />
         </Link>
       </div>
 
